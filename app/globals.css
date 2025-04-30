@@ -1,0 +1,456 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "PressStart2P";
+  src: url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.05em -0.025em 0 rgba(0, 255, 0, 0.75), -0.025em 0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75), -0.05em -0.025em 0 rgba(0, 255, 0, 0.75), -0.025em 0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75), 0.025em 0.025em 0 rgba(0, 255, 0, 0.75), -0.05em -0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75), 0.025em 0.025em 0 rgba(0, 255, 0, 0.75), -0.05em -0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75), 0.05em 0 0 rgba(0, 255, 0, 0.75), 0 -0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75), 0.05em 0 0 rgba(0, 255, 0, 0.75), 0 -0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 rgba(255, 0, 0, 0.75), -0.025em -0.025em 0 rgba(0, 255, 0, 0.75), -0.025em -0.05em 0
+      rgba(0, 0, 255, 0.75);
+  }
+}
+
+/* Define the marquee animation */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(0, 255, 255, 0.1);
+  z-index: 999;
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+}
+
+.scanline-thin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(0, 255, 255, 0.1);
+  z-index: 2;
+  animation: scanline 4s linear infinite;
+  pointer-events: none;
+}
+
+.retro-text {
+  font-family: "Press Start 2P", monospace;
+  text-shadow: 2px 2px 0 #ff0000;
+}
+
+.glitch-text {
+  animation: glitch 1s infinite;
+  font-family: "Press Start 2P", monospace;
+}
+
+.retro-glow {
+  text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+}
+
+.retro-button {
+  border: 3px solid #ffcc00;
+  box-shadow: 3px 3px 0 #ff0000;
+  transition: all 0.1s;
+}
+
+.retro-button:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+.grid-bg {
+  background-image: linear-gradient(rgba(0, 0, 50, 0.8) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 50, 0.8) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center center;
+  perspective: 500px;
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
+
+.crt-effect::before {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* Testimonial iframe container with retro styling */
+.testimonial-iframe-container {
+  position: relative;
+  width: 100%;
+  border: 2px dashed #00ffff;
+  background-color: rgba(0, 0, 50, 0.2);
+  overflow: hidden;
+  animation: blink 4s infinite;
+}
+
+.testimonial-iframe-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.1) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Hide iframe until loaded */
+.testimonial-iframe-container iframe {
+  background: transparent;
+}
+
+/* Calendar container styling */
+.calendar-container {
+  position: relative;
+  border: 2px solid #00ffff;
+  background-color: rgba(0, 0, 50, 0.2);
+  overflow: hidden;
+}
+
+/* Calendar scanlines effect */
+.calendar-scanlines::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.05) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Calendar retro border */
+.calendar-border {
+  border: 2px dashed #00ffff;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  pointer-events: none;
+  animation: blink 4s infinite;
+}
+
+/* Digital LED Marquee */
+.marquee-container {
+  width: 70%;
+  overflow: hidden;
+  background-color: #000;
+  border: 2px solid #333;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.digital-marquee {
+  display: flex;
+  animation: marquee-scroll 15s linear infinite;
+  font-family: "Digital", monospace;
+  white-space: nowrap;
+}
+
+.digital-marquee span {
+  white-space: nowrap;
+  margin-right: 30px;
+  color: #00ff00;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 0 5px #00ff00;
+  letter-spacing: 1px;
+}
+
+/* Digital LED font effect */
+@font-face {
+  font-family: "Digital";
+  src: url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+}
+
+.digital-marquee span {
+  font-family: "VT323", monospace;
+  position: relative;
+}
+
+.digital-marquee span::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  filter: blur(1px);
+}
+
+/* LED segments effect */
+.digital-marquee span {
+  background-image: linear-gradient(0deg, rgba(0, 255, 0, 0.2) 0%, rgba(0, 255, 0, 0.8) 50%, rgba(0, 255, 0, 0.2) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 2px rgba(0, 255, 0, 0.8), 0 0 5px rgba(0, 255, 0, 0.5);
+  animation: led-blink 2s infinite;
+}
+
+/* New LED blinking animation */
+@keyframes led-blink {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.8), 0 0 5px rgba(0, 255, 0, 0.5);
+  }
+  10% {
+    opacity: 0.95;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.7), 0 0 4px rgba(0, 255, 0, 0.4);
+  }
+  20% {
+    opacity: 0.97;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.75), 0 0 5px rgba(0, 255, 0, 0.45);
+  }
+  30% {
+    opacity: 0.99;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.8), 0 0 5px rgba(0, 255, 0, 0.5);
+  }
+  40% {
+    opacity: 0.94;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.7), 0 0 4px rgba(0, 255, 0, 0.4);
+  }
+  50% {
+    opacity: 0.98;
+    text-shadow: 0 0 3px rgba(0, 255, 0, 0.9), 0 0 7px rgba(0, 255, 0, 0.6);
+  }
+  60% {
+    opacity: 0.95;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.7), 0 0 5px rgba(0, 255, 0, 0.45);
+  }
+  70% {
+    opacity: 0.96;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.75), 0 0 5px rgba(0, 255, 0, 0.5);
+  }
+  80% {
+    opacity: 1;
+    text-shadow: 0 0 3px rgba(0, 255, 0, 0.85), 0 0 6px rgba(0, 255, 0, 0.55);
+  }
+  90% {
+    opacity: 0.94;
+    text-shadow: 0 0 2px rgba(0, 255, 0, 0.7), 0 0 4px rgba(0, 255, 0, 0.4);
+  }
+}
+
+/* Add random flickering to individual characters */
+.digital-marquee span .flicker {
+  animation: character-flicker 4s infinite steps(1);
+  display: inline-block;
+}
+
+@keyframes character-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  1%,
+  5%,
+  9% {
+    opacity: 0.87;
+  }
+  2%,
+  4%,
+  10% {
+    opacity: 0.95;
+  }
+  3%,
+  6%,
+  8% {
+    opacity: 0.9;
+  }
+  7% {
+    opacity: 0.93;
+  }
+}
+
+/* Scroll Indicators Styling */
+.arrow-container {
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 2px solid #ffcc00;
+  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 4px 0;
+  transition: all 0.2s ease;
+}
+
+.arrow-container::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border: 1px dashed rgba(255, 204, 0, 0.5);
+  border-radius: 5px;
+  opacity: 0.5;
+}
+
+.arrow-active {
+  background-color: #ffcc00;
+}
+
+.arrow-active svg {
+  color: #000 !important;
+}
+
+.arrow-key-label {
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  margin-top: 2px;
+}
+
+@keyframes float-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes float-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+}
+
+.arrow-up {
+  animation: float-up 2s ease-in-out infinite;
+}
+
+.arrow-down {
+  animation: float-down 2s ease-in-out infinite;
+}
+
+/* Newsletter styling */
+.newsletter-container {
+  position: relative;
+  overflow: visible;
+}
+
+/* Sticky sidebar styles */
+.sticky-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 350px;
+  overflow-y: auto;
+  padding: 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: #ffcc00 #000;
+  z-index: 40;
+}
+
+/* Content area with margin for fixed sidebar */
+.content-with-sidebar {
+  width: calc(100% - 350px);
+}
+
+/* Mobile adjustments */
+@media (max-width: 1023px) {
+  .sticky-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .content-with-sidebar {
+    margin-left: 0;
+    width: 100%;
+  }
+}
