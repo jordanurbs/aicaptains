@@ -42,11 +42,7 @@ export function ScrollIndicators({ alwaysVisible = true }: { alwaysVisible?: boo
         </div>
 
         {/* Controller name */}
-        <div className="absolute -top-2.5 left-6 right-6 text-center">
-          <div className="bg-black text-yellow-500 text-xs px-2 py-0.5 rounded border border-yellow-500 text-[8px] font-bold">
-            AI-PAD
-          </div>
-        </div>
+
 
         <div className="text-center mb-2 mt-1">
           <p className="text-yellow-500 text-xs retro-text">PRESS</p>
