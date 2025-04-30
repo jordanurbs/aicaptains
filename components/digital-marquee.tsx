@@ -7,7 +7,7 @@ interface DigitalMarqueeProps {
   speed?: number
 }
 
-export function DigitalMarquee({ text, speed = 15 }: DigitalMarqueeProps) {
+export function DigitalMarquee({ text, speed = 25 }: DigitalMarqueeProps) {
   const marqueeRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -21,11 +21,11 @@ export function DigitalMarquee({ text, speed = 15 }: DigitalMarqueeProps) {
     }
   }, [text, speed])
 
-  // Add flickering effect to random characters
+  // Add very subtle flickering effect to a small number of characters
   const renderTextWithFlicker = (text: string) => {
     return text.split("").map((char, index) => {
-      // Randomly apply flickering to some characters (about 30% of them)
-      const shouldFlicker = Math.random() > 0.7
+      // Randomly apply flickering to fewer characters (about 10% of them)
+      const shouldFlicker = Math.random() > 0.9
       return shouldFlicker ? (
         <span key={index} className="flicker">
           {char}
@@ -39,7 +39,7 @@ export function DigitalMarquee({ text, speed = 15 }: DigitalMarqueeProps) {
   return (
     <div className="marquee-container">
       <div className="digital-marquee" ref={marqueeRef}>
-        <span data-text={text}>{renderTextWithFlicker(text)}</span>
+        <span data-text={text}>{text}</span>
         <span data-text={text}>{renderTextWithFlicker(text)}</span>
       </div>
     </div>

@@ -225,14 +225,14 @@
   width: 70%;
   overflow: hidden;
   background-color: #000;
-  border: 2px solid #333;
+  border: 2px solid #00aa00;
   border-radius: 4px;
-  padding: 2px 4px;
+  padding: 4px 6px;
 }
 
 .digital-marquee {
   display: flex;
-  animation: marquee-scroll 15s linear infinite;
+  animation: marquee-scroll 25s linear infinite;
   font-family: "Digital", monospace;
   white-space: nowrap;
 }
@@ -241,10 +241,10 @@
   white-space: nowrap;
   margin-right: 30px;
   color: #00ff00;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
-  text-shadow: 0 0 5px #00ff00;
-  letter-spacing: 1px;
+  text-shadow: 0 0 3px #00ff00;
+  letter-spacing: 1.5px;
 }
 
 /* Digital LED font effect */
@@ -265,18 +265,17 @@
   top: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.5;
-  filter: blur(1px);
+  opacity: 0.3;
+  filter: blur(0.5px);
 }
 
 /* LED segments effect */
 .digital-marquee span {
-  background-image: linear-gradient(0deg, rgba(0, 255, 0, 0.2) 0%, rgba(0, 255, 0, 0.8) 50%, rgba(0, 255, 0, 0.2) 100%);
   background-clip: text;
   -webkit-background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 2px rgba(0, 255, 0, 0.8), 0 0 5px rgba(0, 255, 0, 0.5);
-  animation: led-blink 2s infinite;
+  color: #00ff44;
+  text-shadow: 0 0 2px rgba(0, 255, 0, 0.8);
+  animation: led-blink 3s infinite;
 }
 
 /* New LED blinking animation */
@@ -326,7 +325,7 @@
 
 /* Add random flickering to individual characters */
 .digital-marquee span .flicker {
-  animation: character-flicker 4s infinite steps(1);
+  animation: character-flicker 5s infinite steps(1);
   display: inline-block;
 }
 
@@ -336,22 +335,15 @@
     opacity: 1;
   }
   1%,
-  5%,
-  9% {
-    opacity: 0.87;
+  5% {
+    opacity: 0.92;
   }
   2%,
-  4%,
   10% {
+    opacity: 0.97;
+  }
+  3% {
     opacity: 0.95;
-  }
-  3%,
-  6%,
-  8% {
-    opacity: 0.9;
-  }
-  7% {
-    opacity: 0.93;
   }
 }
 
