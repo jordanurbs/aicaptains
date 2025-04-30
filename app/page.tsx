@@ -80,6 +80,9 @@ function AICaptainsContent() {
 
   return (
     <div className="h-screen bg-black text-white overflow-hidden relative crt-effect">
+      {/* Scroll Indicators - placed at top level to always be visible */}
+      <ScrollIndicators />
+
       {/* Show intro sequence if needed */}
       {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
 
@@ -89,14 +92,11 @@ function AICaptainsContent() {
       {/* Grid background */}
       <div className="grid-bg absolute inset-0 z-0"></div>
 
-      {/* Scroll Indicators */}
-      <ScrollIndicators />
-
       <div className="relative z-10 flex flex-col h-screen">
         <div className="flex flex-col lg:flex-row flex-grow overflow-hidden">
           {/* Left Sidebar - Sticky on desktop */}
           <div className="sticky-sidebar bg-gray-900 p-6 border-4 border-yellow-500 rounded-lg lg:rounded-none lg:border-r-4 lg:border-l-0 lg:border-t-0 lg:border-b-0">
-            <div className="space-y-6 h-full">
+            <div className="space-y-6 h-full flex flex-col">
               {/* Logo */}
               <div className="flex justify-center">
                 <Image
