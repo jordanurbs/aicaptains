@@ -38,6 +38,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
   // Handle the "PRESS START" action
   const handlePressStart = () => {
     playSound("click")
+    // Play background music when PRESS START is clicked
+    playSound("background")
     setCurrentStep("complete")
     onComplete()
   }

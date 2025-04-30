@@ -532,7 +532,7 @@ function drawHUD(ctx: CanvasRenderingContext2D, state: GameState) {
 
   // Draw score
   ctx.fillStyle = "#ffff00"
-  ctx.font = '16px "Press Start 2P", monospace'
+  ctx.font = '16px "PressStart2P", monospace'
   ctx.textAlign = "left"
   ctx.fillText(`SCORE: ${score}`, 10, 20)
 
@@ -553,17 +553,17 @@ function drawGameOver(ctx: CanvasRenderingContext2D, score: number) {
 
   // Game over text
   ctx.fillStyle = "#ff0000"
-  ctx.font = '32px "Press Start 2P", monospace'
+  ctx.font = '32px "PressStart2P", monospace'
   ctx.textAlign = "center"
   ctx.fillText("GAME OVER", GAME_WIDTH / 2, GAME_HEIGHT / 2 - 40)
 
   // Score
   ctx.fillStyle = "#ffff00"
-  ctx.font = '16px "Press Start 2P", monospace'
+  ctx.font = '16px "PressStart2P", monospace'
   ctx.fillText(`FINAL SCORE: ${score}`, GAME_WIDTH / 2, GAME_HEIGHT / 2 + 10)
 
   // Restart prompt
   ctx.fillStyle = "#00ffff"
-  ctx.font = '12px "Press Start 2P", monospace'
+  ctx.font = '12px "PressStart2P", monospace'
   ctx.fillText("PRESS SPACE TO RESTART", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60)
 }

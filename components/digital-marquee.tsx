@@ -21,26 +21,16 @@ export function DigitalMarquee({ text, speed = 25 }: DigitalMarqueeProps) {
     }
   }, [text, speed])
 
-  // Add very subtle flickering effect to a small number of characters
-  const renderTextWithFlicker = (text: string) => {
-    return text.split("").map((char, index) => {
-      // Randomly apply flickering to fewer characters (about 10% of them)
-      const shouldFlicker = Math.random() > 0.9
-      return shouldFlicker ? (
-        <span key={index} className="flicker">
-          {char}
-        </span>
-      ) : (
-        <span key={index}>{char}</span>
-      )
-    })
-  }
+  // Make sure we have enough copies for smooth looping
+  // The key is to have identical copies for seamless transitions
+  const repeatedText = `${text} • `;
 
   return (
     <div className="marquee-container">
       <div className="digital-marquee" ref={marqueeRef}>
-        <span data-text={text}>{text}</span>
-        <span data-text={text}>{renderTextWithFlicker(text)}</span>
+        <span data-text={repeatedText}>{repeatedText}</span>
+        <span data-text={repeatedText}>{repeatedText}</span>
+        <span data-text={repeatedText}>{repeatedText}</span>
       </div>
     </div>
   )

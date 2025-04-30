@@ -74,7 +74,7 @@
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-33.33%);
   }
 }
 
@@ -222,26 +222,26 @@
 
 /* Digital LED Marquee */
 .marquee-container {
-  width: 70%;
+  width: 100%;
   overflow: hidden;
   background-color: #000;
   border: 2px solid #00aa00;
   border-radius: 4px;
-  padding: 4px 6px;
+  padding: 1px 3px;
 }
 
 .digital-marquee {
   display: flex;
-  animation: marquee-scroll 25s linear infinite;
+  animation: marquee-scroll 15s linear infinite;
   font-family: "Digital", monospace;
   white-space: nowrap;
 }
 
 .digital-marquee span {
   white-space: nowrap;
-  margin-right: 30px;
+  margin-right: 12px;
   color: #00ff00;
-  font-size: 14px;
+  font-size: 18px;
   font-weight: bold;
   text-shadow: 0 0 3px #00ff00;
   letter-spacing: 1.5px;
@@ -380,7 +380,7 @@
 }
 
 .arrow-key-label {
-  font-family: "Press Start 2P", monospace;
+  font-family: "PressStart2P", monospace;
   font-size: 8px;
   margin-top: 2px;
 }

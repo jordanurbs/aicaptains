@@ -2,19 +2,26 @@
 
 import { useState, useEffect } from "react"
 import { ChevronUp, ChevronDown, Gamepad2 } from "lucide-react"
+import { SoundToggle } from "@/components/sound-toggle"
+import { useSoundEffects } from "@/hooks/use-sound-effects"
 
 export function ScrollIndicators({ alwaysVisible = true }: { alwaysVisible?: boolean }) {
   const [showIndicators, setShowIndicators] = useState(true)
   const [activeArrow, setActiveArrow] = useState<"up" | "down" | null>(null)
+  const { isMuted, playSound } = useSoundEffects()
 
   // Handle arrow key presses to show activity
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowUp") {
         setActiveArrow("up")
+        // Play scroll sound when arrow is pressed
+        playSound("scroll")
         setTimeout(() => setActiveArrow(null), 300)
       } else if (e.key === "ArrowDown") {
         setActiveArrow("down")
+        // Play scroll sound when arrow is pressed
+        playSound("scroll")
         setTimeout(() => setActiveArrow(null), 300)
       }
     }
@@ -24,7 +31,7 @@ export function ScrollIndicators({ alwaysVisible = true }: { alwaysVisible?: boo
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [])
+  }, [playSound])
 
   // If in always visible mode, don't hide the indicators
   if (!showIndicators && !alwaysVisible) return null
@@ -48,7 +55,14 @@ export function ScrollIndicators({ alwaysVisible = true }: { alwaysVisible?: boo
           <p className="text-yellow-500 text-xs retro-text">PRESS</p>
         </div>
 
-        <div className={`arrow-container ${activeArrow === "up" ? "arrow-active" : ""}`}>
+        <div 
+          className={`arrow-container ${activeArrow === "up" ? "arrow-active" : ""}`} 
+          onClick={() => {
+            setActiveArrow("up")
+            playSound("scroll")
+            setTimeout(() => setActiveArrow(null), 300)
+          }}
+        >
           <ChevronUp className="h-8 w-8 text-yellow-500 arrow-up" />
         </div>
 
@@ -56,9 +70,22 @@ export function ScrollIndicators({ alwaysVisible = true }: { alwaysVisible?: boo
           <span className="text-cyan-400 text-xs retro-text">UP</span>
         </div>
 
-        <div className="my-2 text-gray-500 font-bold">/</div>
+        {/* Sound Toggle in the middle */}
+        <div className="my-3 flex flex-col items-center">
+          <SoundToggle />
+          <div className="mt-1">
+            <span className="text-cyan-400 text-xs retro-text">{isMuted ? "SOUND OFF" : "SOUND ON"}</span>
+          </div>
+        </div>
 
-        <div className={`arrow-container ${activeArrow === "down" ? "arrow-active" : ""}`}>
+        <div 
+          className={`arrow-container ${activeArrow === "down" ? "arrow-active" : ""}`}
+          onClick={() => {
+            setActiveArrow("down")
+            playSound("scroll")
+            setTimeout(() => setActiveArrow(null), 300)
+          }}
+        >
           <ChevronDown className="h-8 w-8 text-yellow-500 arrow-down" />
         </div>
 

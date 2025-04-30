@@ -48,12 +48,18 @@ function AICaptainsContent() {
       if (showIntro) return // Don't handle keyboard navigation during intro
 
       if (e.key === "ArrowDown") {
+        // Play scroll sound first for better user feedback
+        playSound("scroll")
+        
         setSelectedItem((prev) => {
           const newValue = prev < 2 ? prev + 1 : prev
           if (newValue !== prev) playSound("select")
           return newValue
         })
       } else if (e.key === "ArrowUp") {
+        // Play scroll sound first for better user feedback
+        playSound("scroll")
+        
         setSelectedItem((prev) => {
           const newValue = prev > 0 ? prev - 1 : prev
           if (newValue !== prev) playSound("select")
@@ -71,6 +77,12 @@ function AICaptainsContent() {
   // Handle button click sound
   const handleButtonClick = () => {
     playSound("click")
+  }
+
+  // Handle PRESS START button click
+  const handlePressStart = () => {
+    playSound("click")
+    // No longer start background music here since it's started in the intro sequence
   }
 
   // Handle hover sound
@@ -108,10 +120,9 @@ function AICaptainsContent() {
                 />
               </div>
 
-              {/* Sound Toggle and Marquee */}
-              <div className="flex items-center justify-between">
+              {/* Marquee - now full width */}
+              <div className="flex items-center justify-center">
                 <DigitalMarquee text="BUILD WITH AI, NOT LIMITS" />
-                <SoundToggle />
               </div>
 
               {/* Tagline */}
@@ -130,7 +141,7 @@ function AICaptainsContent() {
                 <Button
                   variant="outline"
                   className="w-full retro-button bg-black text-yellow-500 hover:bg-yellow-500 hover:text-black"
-                  onClick={handleButtonClick}
+                  onClick={handlePressStart}
                   onMouseEnter={handleHover}
                 >
                   <Gamepad2 className="mr-2 h-4 w-4" /> PRESS START
