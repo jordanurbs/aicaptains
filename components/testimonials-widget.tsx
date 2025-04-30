@@ -1,13 +1,25 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ChevronRight } from "lucide-react"
 
 export function TestimonialsWidget() {
   const [isLoaded, setIsLoaded] = useState(false)
 
-  // Use a simple iframe approach to completely isolate the Senja widget
-  // This prevents any ResizeObserver loops from affecting our main page
+  useEffect(() => {
+    // Load the Senja script
+    const script = document.createElement("script")
+    script.src = "https://widget.senja.io/widget/6e176c06-65fb-4f96-a92b-38947e83a7e2/platform.js"
+    script.async = true
+    script.onload = () => setIsLoaded(true)
+    document.body.appendChild(script)
+
+    return () => {
+      // Clean up script when component unmounts
+      document.body.removeChild(script)
+    }
+  }, [])
+
   return (
     <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-900">
       <div className="bg-yellow-500 text-black p-2 flex justify-between items-center">
@@ -28,33 +40,14 @@ export function TestimonialsWidget() {
           </div>
         )}
 
-        {/* Iframe container with fixed height to prevent layout shifts */}
-        <div className="testimonial-iframe-container" style={{ height: "500px", position: "relative" }}>
-          <iframe
-            src="https://embed.senja.io/6e176c06-65fb-4f96-a92b-38947e83a7e2/shadow"
-            style={{
-              width: "100%",
-              height: "100%",
-              border: "none",
-              position: "absolute",
-              top: 0,
-              left: 0,
-              opacity: isLoaded ? 1 : 0,
-              transition: "opacity 0.5s ease",
-            }}
-            onLoad={() => setIsLoaded(true)}
-            title="AI CAPTAINS Testimonials"
-          />
-
-          {/* Fallback message in case iframe fails to load */}
-          {!isLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <noscript>
-                <p className="text-cyan-400 text-center">Please enable JavaScript to view testimonials</p>
-              </noscript>
-            </div>
-          )}
-        </div>
+        {/* Senja embed container */}
+        <div 
+          className="senja-embed" 
+          data-id="6e176c06-65fb-4f96-a92b-38947e83a7e2" 
+          data-mode="shadow" 
+          data-lazyload="false" 
+          style={{ display: "block", width: "100%" }}
+        />
       </div>
     </section>
   )
