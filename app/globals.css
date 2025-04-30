@@ -27,11 +27,11 @@
 }
 
 @keyframes fadeInUp {
-  from {
+  0% {
     opacity: 0;
     transform: translateY(20px);
   }
-  to {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -103,13 +103,13 @@
 }
 
 .retro-text {
-  font-family: "Press Start 2P", monospace;
+  font-family: "PressStart2P", monospace;
   text-shadow: 2px 2px 0 #ff0000;
 }
 
 .glitch-text {
   animation: glitch 1s infinite;
-  font-family: "Press Start 2P", monospace;
+  font-family: "PressStart2P", monospace;
 }
 
 .retro-glow {
@@ -428,17 +428,24 @@
   position: sticky;
   top: 0;
   height: 100vh;
+  max-height: 100vh;
   width: 350px;
   overflow-y: auto;
   padding: 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: #ffcc00 #000;
   z-index: 40;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Content area with margin for fixed sidebar */
 .content-with-sidebar {
   width: calc(100% - 350px);
+  overflow-y: auto;
+  flex: 1;
+  max-height: 100vh;
 }
 
 /* Mobile adjustments */
@@ -447,10 +454,13 @@
     position: relative;
     width: 100%;
     height: auto;
+    max-height: none;
+    align-self: auto;
   }
 
   .content-with-sidebar {
     margin-left: 0;
     width: 100%;
+    max-height: none;
   }
 }

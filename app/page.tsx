@@ -79,7 +79,7 @@ function AICaptainsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative crt-effect">
+    <div className="h-screen bg-black text-white overflow-hidden relative crt-effect">
       {/* Show intro sequence if needed */}
       {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
 
@@ -92,11 +92,11 @@ function AICaptainsContent() {
       {/* Scroll Indicators */}
       <ScrollIndicators />
 
-      <div className="relative z-10">
-        <div className="flex flex-col lg:flex-row">
+      <div className="relative z-10 flex flex-col h-screen">
+        <div className="flex flex-col lg:flex-row flex-grow overflow-hidden">
           {/* Left Sidebar - Sticky on desktop */}
-          <div className="lg:sticky-sidebar bg-gray-900 p-6 border-4 border-yellow-500 rounded-lg lg:rounded-none lg:border-r-4 lg:border-l-0 lg:border-t-0 lg:border-b-0">
-            <div className="space-y-6">
+          <div className="sticky-sidebar bg-gray-900 p-6 border-4 border-yellow-500 rounded-lg lg:rounded-none lg:border-r-4 lg:border-l-0 lg:border-t-0 lg:border-b-0">
+            <div className="space-y-6 h-full">
               {/* Logo */}
               <div className="flex justify-center">
                 <Image
@@ -194,7 +194,7 @@ function AICaptainsContent() {
           </div>
 
           {/* Right Content - Scrollable */}
-          <div className="lg:content-with-sidebar p-6 space-y-8">
+          <div className="content-with-sidebar p-6 space-y-8 overflow-y-auto">
             {/* Menu Button - Only show on mobile */}
             <div className="flex justify-end lg:hidden">
               <Button

@@ -2,9 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'AI CAPTAINS | COMMAND THE FUTURE. NAVIGATE WITH POWER.',
+  description: 'Build with AI, not limits. AI CAPTAINS helps you build.',
 }
 
 export default function RootLayout({
