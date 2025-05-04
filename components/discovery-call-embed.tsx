@@ -10,13 +10,13 @@ export function DiscoveryCallEmbed() {
   return (
     <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-900">
       <div className="bg-yellow-500 text-black p-2 flex justify-between items-center">
-        <h2 className="text-xl font-bold retro-text">TRYING TO BUILD? BOOK A DISCOVERY CALL</h2>
+        <h2 className="text-xl font-bold retro-text">STRUGGLING TO BUILD WITH AI?</h2>
         <ChevronRight className="w-6 h-6" />
       </div>
       <div className="p-6">
         {/* Retro-styled intro text */}
         <div className="text-center mb-6">
-          <p className="text-cyan-400 retro-text text-lg mb-2">SCHEDULE YOUR MISSION</p>
+          <p className="text-cyan-400 retro-text text-lg mb-2">SCHEDULE YOUR DISCOVERY MISSION</p>
           <p className="text-gray-300 text-xs">Select a time slot to begin your AI CAPTAINS journey. Let's connect.</p>
         </div>
 

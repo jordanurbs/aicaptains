@@ -52,7 +52,7 @@ function AICaptainsContent() {
         playSound("scroll")
         
         setSelectedItem((prev) => {
-          const newValue = prev < 2 ? prev + 1 : prev
+          const newValue = prev < 3 ? prev + 1 : prev
           if (newValue !== prev) playSound("select")
           return newValue
         })
@@ -127,16 +127,15 @@ function AICaptainsContent() {
 
               {/* Tagline */}
               <div className="text-center">
-                <p className="text-cyan-400 retro-text text-sm">COMMAND THE FUTURE.</p>
-                <p className="text-cyan-400 retro-text text-sm">NAVIGATE WITH POWER.</p>
+                <p className="text-cyan-400 retro-text text-lg">COMMAND YOUR FUTURE.</p>
+                <p className="text-cyan-400 retro-text text-lg">NAVIGATE WITH POWER.</p>
               </div>
 
               {/* Bio */}
               <div className="space-y-6 border-t-2 border-b-2 border-yellow-500 py-4">
                 <p className="text-gray-300 leading-relaxed text-sm">
-                  <span className="text-yellow-500 font-bold">PRESS START</span> to begin your journey from AI passenger
-                  to AI Captain. Our retro-powered tools and training will level up your command line skills and
-                  transform your digital ecosystem.
+                  We train tech-capable BUILDERS to build business tools with AI and vibe coding.</p><p className="text-gray-300 leading-relaxed text-sm">
+                  <span className="text-yellow-500 font-bold"> PRESS START</span> to begin your journey:
                 </p>
                 <Button
                   variant="outline"
@@ -181,7 +180,8 @@ function AICaptainsContent() {
                 </div>
                 <div className="text-gray-400 text-xs text-center">
                   <p>© 2025 AI-CAPTAINS.COM</p>
-                  <div className="flex justify-center gap-4 mt-1">
+                  <p>Built by <a href="https://jordanurbs.com" className="hover:text-cyan-400">Jordan Urbs</a></p>
+                {/*  <div className="flex justify-center gap-4 mt-1">
                     <Link
                       href="#"
                       className="hover:text-cyan-400"
@@ -198,8 +198,8 @@ function AICaptainsContent() {
                     >
                       CHEAT CODES
                     </Link>
-                  </div>
-                </div>
+                  </div>*/}
+                </div> 
               </div>
             </div>
           </div>
@@ -251,12 +251,40 @@ function AICaptainsContent() {
                 <h2 className="text-xl font-bold retro-text">SELECT YOUR POWER-UP</h2>
                 <ChevronRight className="w-6 h-6" />
               </div>
-              <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Implementation Call */}
+              <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Terminal Navigation Toolkit */}
                 <div
                   className={`relative border-4 ${selectedItem === 0 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
                   onClick={() => {
                     setSelectedItem(0)
+                    playSound("click")
+                  }}
+                  onMouseEnter={() => {
+                    handleHover()
+                  }}
+                >
+                  <Image
+                    src="/images/tnt-boxart.png"
+                    alt="Terminal Navigation Toolkit"
+                    width={200}
+                    height={300}
+                    className="w-full object-cover"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
+                    <p className="text-yellow-500 text-sm font-bold">TERMINAL NAVIGATION TOOLKIT</p>
+                    <div className="flex mt-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Implementation Call */}
+                <div
+                  className={`relative border-4 ${selectedItem === 1 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
+                  onClick={() => {
+                    setSelectedItem(1)
                     playSound("click")
                   }}
                   onMouseEnter={() => {
@@ -280,35 +308,7 @@ function AICaptainsContent() {
                   </div>
                 </div>
 
-                {/* Magazine */}
-                <div
-                  className={`relative border-4 ${selectedItem === 1 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
-                  onClick={() => {
-                    setSelectedItem(1)
-                    playSound("click")
-                  }}
-                  onMouseEnter={() => {
-                    handleHover()
-                  }}
-                >
-                  <Image
-                    src="/images/power-glove.png"
-                    alt="AI CAPTAINS Power Glove"
-                    width={200}
-                    height={300}
-                    className="w-full object-cover"
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                    <p className="text-yellow-500 text-sm font-bold">AI ARSENAL MAGAZINE</p>
-                    <div className="flex mt-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Co-Founder Program */}
+                {/* AI Captains Academy */}
                 <div
                   className={`relative border-4 ${selectedItem === 2 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
                   onClick={() => {
@@ -320,14 +320,42 @@ function AICaptainsContent() {
                   }}
                 >
                   <Image
-                    src="/images/co-founder-program.png"
+                    src="/images/academy-boxart.png"
+                    alt="AI Captains Academy"
+                    width={200}
+                    height={300}
+                    className="w-full object-cover"
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
+                    <p className="text-yellow-500 text-sm font-bold">AI CAPTAINS ACADEMY <span className="text-cyan-400 text-xs">(Coming Soon!)</span></p>
+                    <div className="flex mt-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Co-Founder Program */}
+                <div
+                  className={`relative border-4 ${selectedItem === 3 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
+                  onClick={() => {
+                    setSelectedItem(3)
+                    playSound("click")
+                  }}
+                  onMouseEnter={() => {
+                    handleHover()
+                  }}
+                >
+                  <Image
+                    src="/images/cofounderprogram.png"
                     alt="Executive Co-Founder Program"
                     width={200}
                     height={300}
                     className="w-full object-cover"
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                    <p className="text-yellow-500 text-sm font-bold">CO-FOUNDER PROGRAM</p>
+                    <p className="text-yellow-500 text-sm font-bold">EXECUTIVE CO-FOUNDER PROGRAM</p>
                     <div className="flex mt-1">
                       {[...Array(5)].map((_, i) => (
                         <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
@@ -338,26 +366,6 @@ function AICaptainsContent() {
               </div>
             </section>
 
-            {/* Stack Section */}
-            <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-blue-900">
-              <div className="bg-yellow-500 text-black p-2 flex justify-between items-center">
-                <h2 className="text-xl font-bold retro-text">YOUR ARSENAL</h2>
-                <ChevronRight className="w-6 h-6" />
-              </div>
-              <div className="p-4 flex flex-wrap gap-4 justify-center">
-                {/* Arsenal items with pixel art style */}
-                {["TERMINAL", "AI", "CODE", "CANVAS", "COMMERCE"].map((item, i) => (
-                  <div
-                    key={i}
-                    className="w-16 h-16 bg-gray-800 border-2 border-cyan-400 rounded-lg flex items-center justify-center cursor-pointer"
-                    onClick={handleButtonClick}
-                    onMouseEnter={handleHover}
-                  >
-                    <p className="text-cyan-400 text-xs font-bold text-center">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
 
             {/* Testimonials Section - Full Width */}
             <TestimonialsWidget />
@@ -365,7 +373,7 @@ function AICaptainsContent() {
             {/* Discovery Call Calendar - Full Width */}
             <DiscoveryCallEmbed />
 
-            {/* Contact Section - Full Width */}
+            {/* Contact Section - Full Width 
             <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gradient-to-br from-purple-900 to-blue-900">
               <div className="bg-yellow-500 text-black p-2">
                 <h2 className="text-xl font-bold retro-text">CONTACT</h2>
@@ -383,7 +391,7 @@ function AICaptainsContent() {
                   </Button>
                 </div>
               </div>
-            </section>
+            </section>*/}
           </div>
         </div>
       </div>

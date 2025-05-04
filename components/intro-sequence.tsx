@@ -25,10 +25,9 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
     // Sequence timing - 3x faster
     timers.push(setTimeout(() => setCurrentStep("logo-appear"), 333))
-    timers.push(setTimeout(() => setCurrentStep("tagline"), 1000))
-    timers.push(setTimeout(() => setCurrentStep("grid-appear"), 1667))
-    timers.push(setTimeout(() => setCurrentStep("products-appear"), 2167))
-    timers.push(setTimeout(() => setCurrentStep("press-start"), 2833))
+    timers.push(setTimeout(() => setCurrentStep("tagline"), 7000))
+    timers.push(setTimeout(() => setCurrentStep("grid-appear"), 1267))
+    timers.push(setTimeout(() => setCurrentStep("press-start"), 1633))
 
     return () => {
       timers.forEach(clearTimeout)
@@ -93,38 +92,14 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
       {/* Tagline */}
       <div
-        className={`mt-6 transition-all duration-300 ${
+        className={`mt-6 transition-all duration-100 ${
           currentStep === "black" || currentStep === "logo-appear"
             ? "opacity-0 transform translate-y-10"
             : "opacity-100 transform translate-y-0"
         }`}
       >
-        <p className="text-cyan-400 retro-text text-xl text-center">COMMAND THE FUTURE.</p>
-        <p className="text-cyan-400 retro-text text-xl text-center mt-2">NAVIGATE WITH POWER.</p>
-      </div>
-
-      {/* Products showcase */}
-      <div
-        className={`mt-12 flex gap-6 transition-all duration-300 ${
-          currentStep === "products-appear" || currentStep === "press-start"
-            ? "opacity-100 transform translate-y-0"
-            : "opacity-0 transform translate-y-20"
-        }`}
-      >
-        {["/images/implementation-call.png", "/images/magazine.png", "/images/co-founder-program.png"].map(
-          (src, index) => (
-            <div
-              key={index}
-              className="w-24 h-32 relative border-2 border-yellow-500 overflow-hidden"
-              style={{
-                animationDelay: `${index * 67}ms`,
-                animation: currentStep === "products-appear" ? "fadeInUp 0.17s forwards" : "none",
-              }}
-            >
-              <Image src={src || "/placeholder.svg"} alt="Product" fill className="object-cover" />
-            </div>
-          ),
-        )}
+        <p className="text-cyan-400 retro-text text-xl text-center">COMMAND YOUR FUTURE.</p>
+        <p className="text-cyan-400 retro-text text-xl text-center mt-2 mb-6">NAVIGATE WITH POWER.</p>
       </div>
 
       {/* Press Start Button */}
@@ -144,7 +119,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       <div
         className={`absolute bottom-8 text-gray-500 text-xs ${
           currentStep === "press-start" ? "opacity-100" : "opacity-0"
-        } transition-opacity duration-167`}
+        } transition-opacity duration-90`}
       >
         © 2025 AI CAPTAINS INC. ALL RIGHTS RESERVED.
       </div>
