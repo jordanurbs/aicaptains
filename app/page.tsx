@@ -92,8 +92,8 @@ function AICaptainsContent() {
 
   return (
     <div className="h-screen bg-black text-white overflow-hidden relative crt-effect">
-      {/* Scroll Indicators - placed at top level to always be visible */}
-      <ScrollIndicators />
+      {/* Scroll Indicators - only show when intro is NOT active */}
+      {!showIntro && <ScrollIndicators />}
 
       {/* Show intro sequence if needed */}
       {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
@@ -101,8 +101,8 @@ function AICaptainsContent() {
       {/* Scanline effect */}
       <div className="scanline"></div>
 
-      {/* Grid background */}
-      <div className="grid-bg absolute inset-0 z-0"></div>
+      {/* Grid background - only show when intro is NOT active */}
+      {!showIntro && <div className="grid-bg absolute inset-0 z-0"></div>}
 
       <div className="relative z-10 flex flex-col h-screen">
         <div className="flex flex-col lg:flex-row flex-grow overflow-hidden">
