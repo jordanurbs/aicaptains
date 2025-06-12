@@ -1,9 +1,107 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const JaxAdventure = () => {
+interface JaxAdventureProps {
+  onKeysPressed?: (keys: { ArrowUp: boolean; ArrowDown: boolean; ArrowLeft: boolean; ArrowRight: boolean }) => void;
+}
+
+const JaxAdventure = ({ onKeysPressed }: JaxAdventureProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const jaxImageRef = useRef<HTMLImageElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentScene, setCurrentScene] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  // User control state for keyboard movement
+  const [userControlEnabled, setUserControlEnabled] = useState(true);
+  const [userOffset, setUserOffset] = useState({ x: 0, y: 0 });
+  const userOffsetRef = useRef({ x: 0, y: 0 }); // Ref for animation loop access
+  const [keysPressed, setKeysPressed] = useState({
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false
+  });
+
+  // Update ref whenever userOffset changes
+  useEffect(() => {
+    userOffsetRef.current = userOffset;
+  }, [userOffset]);
+
+  // Notify parent component of key state changes
+  useEffect(() => {
+    if (onKeysPressed) {
+      onKeysPressed(keysPressed);
+    }
+  }, [keysPressed, onKeysPressed]);
+
+  // Keyboard event handlers
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!userControlEnabled) return;
+      
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        setKeysPressed(prev => ({ ...prev, [e.key]: true }));
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (!userControlEnabled) return;
+      
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        setKeysPressed(prev => ({ ...prev, [e.key]: false }));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [userControlEnabled]);
+
+  // Update user offset based on keys pressed
+  useEffect(() => {
+    const updatePosition = () => {
+      if (!userControlEnabled) return;
+
+      const moveSpeed = 3; // Pixels per frame
+      let deltaX = 0;
+      let deltaY = 0;
+
+      if (keysPressed.ArrowLeft) deltaX -= moveSpeed;
+      if (keysPressed.ArrowRight) deltaX += moveSpeed;
+      if (keysPressed.ArrowUp) deltaY -= moveSpeed;
+      if (keysPressed.ArrowDown) deltaY += moveSpeed;
+
+      if (deltaX !== 0 || deltaY !== 0) {
+        setUserOffset(prev => ({
+          x: Math.max(-200, Math.min(200, prev.x + deltaX)), // Limit movement range
+          y: Math.max(-150, Math.min(150, prev.y + deltaY))
+        }));
+      }
+    };
+
+    const interval = setInterval(updatePosition, 16); // ~60fps
+    return () => clearInterval(interval);
+  }, [keysPressed, userControlEnabled]);
+
+  // Load JAX image
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => {
+      jaxImageRef.current = img;
+      setImageLoaded(true);
+    };
+    img.onerror = (error) => {
+      console.error('Failed to load JAX image:', error);
+      setImageLoaded(false);
+    };
+    img.src = '/images/jax-tp.png';
+  }, []);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -27,37 +125,23 @@ const JaxAdventure = () => {
     const gridOrange = '#FF6600';
     const gridPink = '#FF0077';
     
-    // Scene timing (in frames)
+    // Scene timing (in frames) - simplified to just final scene
     const scenes = [
-      { name: "intro", duration: 180 }, // Black screen
-      { name: "oceanText1", duration: 360 }, // First text appears
-      { name: "oceanJourney", duration: 360 }, // JAX moves through ocean
-      { name: "oceanText2", duration: 360 }, // Second text appears
-      { name: "explosionScene", duration: 180 }, // Explosion scene
-      { name: "oceanObstacles", duration: 360 }, // JAX encounters obstacles
-      { name: "oceanText3", duration: 360 }, // Third text appears
-      { name: "spaceTransition", duration: 360 }, // Ocean transforms to space
-      { name: "spaceJourney", duration: 360 }, // JAX navigates space
-      { name: "spaceText", duration: 360 }, // Space text appears
-      { name: "gridTransition", duration: 360 }, // Space transforms to grid
-      { name: "gridJourney", duration: 360 }, // JAX reaches destination
-      { name: "finalText", duration: 360 }, // Final text appears
-      { name: "startButton", duration: Infinity } // Press start button
+      { name: "finalScene", duration: Infinity } // Final retrowave grid with text and controllable JAX
     ];
     
     // JAX character properties
     let jax = {
       x: -50,
       y: canvas.height / 2,
-      width: 48 * 1.5, // 50% larger
-      height: 142 * 1.5, // 50% larger
-      speed: 1,
-      bobAmount: 10,
+      scale: .15, // Scale factor instead of fixed dimensions
+      speed: 1.5,
+      bobAmount: 20,
       bobSpeed: 0.03,
       flying: false,
       flyHeight: 0,
       flySpeed: 0.02,
-      flyDirection: 1, // 1 for up, -1 for down
+      flyDirection: -1, // 1 for up, -1 for down
       propellerAngle: 0,
       propellerSpeed: 0.2
     };
@@ -166,144 +250,7 @@ const JaxAdventure = () => {
       ctx.lineTo(0, -boat.height/2 - 45);
       ctx.fill();
       
-      // Draw JAX sitting in the boat (simplified version)
-      // Position JAX in boat center
-      const jaxBoatX = -30; // relative to boat center
-      const jaxBoatY = -boat.height/2 - 55; // sitting on boat
-      const jaxScale = 1.5; // Scale factor to make JAX bigger
-      
-      // Only draw upper body parts
-      
-      // Ears
-      ctx.fillStyle = '#FFA755'; // Skin tone
-      ctx.fillRect(jaxBoatX + 6 * jaxScale, jaxBoatY + 18 * jaxScale, 4 * jaxScale, 10 * jaxScale); // Left ear
-      ctx.fillRect(jaxBoatX + 38 * jaxScale, jaxBoatY + 18 * jaxScale, 4 * jaxScale, 10 * jaxScale); // Right ear
-      
-      // Face
-      ctx.fillStyle = '#FFA755'; // Skin tone
-      ctx.fillRect(jaxBoatX + 10 * jaxScale, jaxBoatY + 10 * jaxScale, 28 * jaxScale, 30 * jaxScale); // Face
-      
-      // Navy blue hat
-      ctx.fillStyle = '#003399';
-      ctx.fillRect(jaxBoatX + 8 * jaxScale, jaxBoatY, 32 * jaxScale, 12 * jaxScale); // Hat base
-      ctx.fillRect(jaxBoatX + 6 * jaxScale, jaxBoatY - 10 * jaxScale, 36 * jaxScale, 10 * jaxScale); // Hat top
-      
-      // Gold trim on hat
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(jaxBoatX + 8 * jaxScale, jaxBoatY, 32 * jaxScale, 2 * jaxScale); // Hat trim
-      
-      // JAX logo on hat
-      ctx.fillStyle = '#FFCC00';
-      // J shape
-      ctx.fillRect(jaxBoatX + 19 * jaxScale, jaxBoatY - 8 * jaxScale, 4 * jaxScale, 6 * jaxScale); // Vertical part
-      ctx.fillRect(jaxBoatX + 15 * jaxScale, jaxBoatY - 4 * jaxScale, 4 * jaxScale, 2 * jaxScale); // Bottom part
-      
-      // A shape
-      ctx.fillRect(jaxBoatX + 23 * jaxScale, jaxBoatY - 8 * jaxScale, 2 * jaxScale, 6 * jaxScale); // Left leg
-      ctx.fillRect(jaxBoatX + 27 * jaxScale, jaxBoatY - 8 * jaxScale, 2 * jaxScale, 6 * jaxScale); // Right leg
-      ctx.fillRect(jaxBoatX + 23 * jaxScale, jaxBoatY - 4 * jaxScale, 6 * jaxScale, 2 * jaxScale); // Middle connector
-      
-      // X shape (simplified for pixel art)
-      ctx.fillRect(jaxBoatX + 29 * jaxScale, jaxBoatY - 8 * jaxScale, 2 * jaxScale, 2 * jaxScale); // Top left of X
-      ctx.fillRect(jaxBoatX + 33 * jaxScale, jaxBoatY - 8 * jaxScale, 2 * jaxScale, 2 * jaxScale); // Top right of X
-      ctx.fillRect(jaxBoatX + 31 * jaxScale, jaxBoatY - 6 * jaxScale, 2 * jaxScale, 2 * jaxScale); // Center of X
-      ctx.fillRect(jaxBoatX + 29 * jaxScale, jaxBoatY - 4 * jaxScale, 2 * jaxScale, 2 * jaxScale); // Bottom left of X
-      ctx.fillRect(jaxBoatX + 33 * jaxScale, jaxBoatY - 4 * jaxScale, 2 * jaxScale, 2 * jaxScale); // Bottom right of X
-      
-      // Eyes
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(jaxBoatX + 16 * jaxScale, jaxBoatY + 20 * jaxScale, 6 * jaxScale, 6 * jaxScale); // Left eye
-      
-      // Cyber eye (right eye)
-      ctx.fillStyle = '#003366'; // Dark blue base
-      ctx.fillRect(jaxBoatX + 26 * jaxScale, jaxBoatY + 20 * jaxScale, 8 * jaxScale, 8 * jaxScale); // Cyber eye base
-      
-      // Add more detail to cyber eye
-      ctx.fillStyle = '#001133'; // Darker blue for shadow
-      ctx.fillRect(jaxBoatX + 26 * jaxScale, jaxBoatY + 20 * jaxScale, 2 * jaxScale, 8 * jaxScale); // Left edge
-      ctx.fillRect(jaxBoatX + 26 * jaxScale, jaxBoatY + 20 * jaxScale, 8 * jaxScale, 2 * jaxScale); // Top edge
-      
-      ctx.fillStyle = '#FFCC00'; // Gold center
-      ctx.fillRect(jaxBoatX + 28 * jaxScale, jaxBoatY + 22 * jaxScale, 4 * jaxScale, 4 * jaxScale); // Cyber eye glow
-      
-      // Highlight in cyber eye
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(jaxBoatX + 28 * jaxScale, jaxBoatY + 22 * jaxScale, 2 * jaxScale, 2 * jaxScale); // Small highlight
-      
-      // Mouth/smile
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(jaxBoatX + 16 * jaxScale, jaxBoatY + 30 * jaxScale, 16 * jaxScale, 4 * jaxScale); // Smile
-      
-      // Teeth details
-      ctx.fillStyle = '#000022';
-      ctx.fillRect(jaxBoatX + 19 * jaxScale, jaxBoatY + 30 * jaxScale, 2 * jaxScale, 1 * jaxScale); // Tooth separator
-      ctx.fillRect(jaxBoatX + 23 * jaxScale, jaxBoatY + 30 * jaxScale, 2 * jaxScale, 1 * jaxScale); // Tooth separator
-      ctx.fillRect(jaxBoatX + 27 * jaxScale, jaxBoatY + 30 * jaxScale, 2 * jaxScale, 1 * jaxScale); // Tooth separator
-      
-      // Orange beard - more dense
-      ctx.fillStyle = '#FF6600';
-      for (let beardY = 0; beardY < 18; beardY += 4) {
-        for (let beardX = -8; beardX < 24; beardX += 4) {
-          if (Math.random() > 0.1 || beardY < 8) { // More density
-            ctx.fillRect(jaxBoatX + (16 + beardX) * jaxScale, jaxBoatY + (34 + beardY) * jaxScale, 4 * jaxScale, 4 * jaxScale);
-          }
-        }
-      }
-      
-      // Beard highlight
-      ctx.fillStyle = '#FF9933';
-      for (let beardX = -4; beardX < 20; beardX += 6) {
-        ctx.fillRect(jaxBoatX + (16 + beardX) * jaxScale, jaxBoatY + 34 * jaxScale, 4 * jaxScale, 4 * jaxScale);
-        ctx.fillRect(jaxBoatX + (14 + beardX) * jaxScale, jaxBoatY + 38 * jaxScale, 4 * jaxScale, 4 * jaxScale); // Second row of highlights
-      }
-      
-      // Body - Navy Blue uniform (just upper part)
-      ctx.fillStyle = '#003399';
-      ctx.fillRect(jaxBoatX + 8 * jaxScale, jaxBoatY + 50 * jaxScale, 32 * jaxScale, 25 * jaxScale); // Upper torso only
-      
-      // Red trim on uniform
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(jaxBoatX + 8 * jaxScale, jaxBoatY + 50 * jaxScale, 32 * jaxScale, 2 * jaxScale); // Top trim (collar)
-      ctx.fillRect(jaxBoatX + 8 * jaxScale, jaxBoatY + 50 * jaxScale, 2 * jaxScale, 25 * jaxScale); // Left trim
-      ctx.fillRect(jaxBoatX + 38 * jaxScale, jaxBoatY + 50 * jaxScale, 2 * jaxScale, 25 * jaxScale); // Right trim
-      
-      // Center line (buttons area)
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(jaxBoatX + 22 * jaxScale, jaxBoatY + 50 * jaxScale, 2 * jaxScale, 25 * jaxScale); // Center red line
-      
-      // Gold buttons (just top ones)
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(jaxBoatX + 26 * jaxScale, jaxBoatY + 55 * jaxScale, 4 * jaxScale, 4 * jaxScale); // Top button
-      ctx.fillRect(jaxBoatX + 26 * jaxScale, jaxBoatY + 65 * jaxScale, 4 * jaxScale, 4 * jaxScale); // Middle button
-      
-      // Epaulettes (shoulder decorations)
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(jaxBoatX + 6 * jaxScale, jaxBoatY + 50 * jaxScale, 8 * jaxScale, 6 * jaxScale); // Left epaulette
-      ctx.fillRect(jaxBoatX + 34 * jaxScale, jaxBoatY + 50 * jaxScale, 8 * jaxScale, 6 * jaxScale); // Right epaulette
-      
-      // Epaulette details
-      ctx.fillStyle = '#FF9900'; // Darker gold for detail
-      ctx.fillRect(jaxBoatX + 8 * jaxScale, jaxBoatY + 52 * jaxScale, 4 * jaxScale, 2 * jaxScale); // Left epaulette detail
-      ctx.fillRect(jaxBoatX + 36 * jaxScale, jaxBoatY + 52 * jaxScale, 4 * jaxScale, 2 * jaxScale); // Right epaulette detail
-      
-      // Arms
-      ctx.fillStyle = '#003399';
-      ctx.fillRect(jaxBoatX - 2 * jaxScale, jaxBoatY + 54 * jaxScale, 8 * jaxScale, 20 * jaxScale); // Left arm
-      ctx.fillRect(jaxBoatX + 42 * jaxScale, jaxBoatY + 54 * jaxScale, 8 * jaxScale, 20 * jaxScale); // Right arm
-      
-      // Red trim on arms
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(jaxBoatX - 2 * jaxScale, jaxBoatY + 64 * jaxScale, 8 * jaxScale, 2 * jaxScale); // Left arm trim
-      ctx.fillRect(jaxBoatX + 42 * jaxScale, jaxBoatY + 64 * jaxScale, 8 * jaxScale, 2 * jaxScale); // Right arm trim
-      
-      // Hands
-      ctx.fillStyle = '#FFA755';
-      ctx.fillRect(jaxBoatX - 2 * jaxScale, jaxBoatY + 74 * jaxScale, 8 * jaxScale, 8 * jaxScale); // Left hand
-      ctx.fillRect(jaxBoatX + 42 * jaxScale, jaxBoatY + 74 * jaxScale, 8 * jaxScale, 8 * jaxScale); // Right hand
-      
-      // Handle
-      ctx.fillStyle = '#663311';
-      ctx.fillRect(jaxBoatX + 42 * jaxScale, jaxBoatY + 58 * jaxScale, 15 * jaxScale, 6 * jaxScale); // Boat handle
+
       
       // Add boat details - rope and cleats
       ctx.fillStyle = '#663311';
@@ -375,250 +322,116 @@ const JaxAdventure = () => {
       }
     };
     
+    // Draw propeller animation (extracted from original drawJax)
+    const drawPropeller = (x: number, y: number) => {
+      const propellerX = x + 24;
+      const propellerY = y - 10;
+      const propellerSize = 24;
+      
+      // Draw propeller mount
+      ctx.fillStyle = '#555555';
+      ctx.fillRect(x + 20, y - 16, 8, 6);
+      
+      // Draw propeller blades with enhanced detail
+      ctx.save();
+      ctx.translate(propellerX, propellerY);
+      ctx.rotate(jax.propellerAngle);
+      
+      // Update propeller angle for animation
+      jax.propellerAngle += jax.propellerSpeed;
+      
+      // Draw 4 blades instead of just 2
+      ctx.fillStyle = '#444444';
+      ctx.fillRect(-propellerSize / 2, -2, propellerSize, 4); // Horizontal blade
+      ctx.fillRect(-2, -propellerSize / 2, 4, propellerSize); // Vertical blade
+      
+      // Add highlight to blades
+      ctx.fillStyle = '#666666';
+      ctx.fillRect(-propellerSize / 3, -1, propellerSize / 1.5, 2); // Horizontal highlight
+      ctx.fillRect(-1, -propellerSize / 3, 2, propellerSize / 1.5); // Vertical highlight
+      
+      // Add propeller center
+      ctx.fillStyle = '#888888';
+      ctx.beginPath();
+      ctx.arc(0, 0, 4, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    };
+
+    // Draw jetpack fire effects (extracted from original drawJax)
+    const drawJetpackFire = (x: number, y: number, imageWidth: number, imageHeight: number) => {
+      if (Math.random() > 0.3) {
+        // Random flickering jet flames
+        const flameColors = ['#FFCC00', '#FF9900', '#FF6600', '#FF3300']; // Yellow to red gradient
+        
+        // Calculate boot positions based on image dimensions
+        // Assuming boots are at the bottom of the image, positioned like the original pixel art
+        const leftBootX = x + imageWidth * 0.25; // Left boot at 25% of image width
+        const rightBootX = x + imageWidth * 0.75; // Right boot at 75% of image width
+        const bootY = y + imageHeight; // At the bottom of the image
+        
+        // Left boot jet
+        for (let i = 0; i < 3; i++) {
+          const flameSize = Math.random() * 6 + 6;
+          const flameX = leftBootX;
+          const flameY = bootY + i * 5;
+          const colorIndex = Math.floor(Math.random() * flameColors.length);
+          
+          ctx.fillStyle = flameColors[colorIndex];
+          ctx.beginPath();
+          ctx.moveTo(flameX, flameY);
+          ctx.lineTo(flameX - flameSize / 2, flameY + flameSize);
+          ctx.lineTo(flameX + flameSize / 2, flameY + flameSize);
+          ctx.closePath();
+          ctx.fill();
+        }
+        
+        // Right boot jet
+        for (let i = 0; i < 3; i++) {
+          const flameSize = Math.random() * 6 + 6;
+          const flameX = rightBootX;
+          const flameY = bootY + i * 5;
+          const colorIndex = Math.floor(Math.random() * flameColors.length);
+          
+          ctx.fillStyle = flameColors[colorIndex];
+          ctx.beginPath();
+          ctx.moveTo(flameX, flameY);
+          ctx.lineTo(flameX - flameSize / 2, flameY + flameSize);
+          ctx.lineTo(flameX + flameSize / 2, flameY + flameSize);
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+    };
+
     const drawJax = (x: number, y: number, flying: boolean = false) => {
-      // Scale factor for larger JAX
-      const scale = flying ? 1.0 : 1.5; // Only apply scale in early scenes (not flying)
-      
-      // Ears
-      ctx.fillStyle = '#FFA755'; // Skin tone
-      ctx.fillRect(x + 6 * scale, y + 18 * scale, 4 * scale, 10 * scale); // Left ear
-      ctx.fillRect(x + 38 * scale, y + 18 * scale, 4 * scale, 10 * scale); // Right ear
-      
-      // Face
-      ctx.fillStyle = '#FFA755'; // Skin tone
-      ctx.fillRect(x + 10 * scale, y + 10 * scale, 28 * scale, 30 * scale); // Face
-      
-      // Navy blue hat
-      ctx.fillStyle = '#003399';
-      ctx.fillRect(x + 8 * scale, y, 32 * scale, 12 * scale); // Hat base
-      ctx.fillRect(x + 6 * scale, y - 10 * scale, 36 * scale, 10 * scale); // Hat top
-      
-      // Gold trim on hat
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(x + 8 * scale, y, 32 * scale, 2 * scale); // Hat trim
-      
-      // JAX logo on hat (more detailed)
-      ctx.fillStyle = '#FFCC00';
-      
-      // Draw pixelated "JAX" emblem
-      // J shape
-      ctx.fillRect(x + 19 * scale, y - 8 * scale, 4 * scale, 6 * scale); // Vertical part
-      ctx.fillRect(x + 15 * scale, y - 4 * scale, 4 * scale, 2 * scale); // Bottom part
-      
-      // A shape
-      ctx.fillRect(x + 23 * scale, y - 8 * scale, 2 * scale, 6 * scale); // Left leg
-      ctx.fillRect(x + 27 * scale, y - 8 * scale, 2 * scale, 6 * scale); // Right leg
-      ctx.fillRect(x + 23 * scale, y - 4 * scale, 6 * scale, 2 * scale); // Middle connector
-      
-      // X shape (simplified for pixel art)
-      ctx.fillRect(x + 29 * scale, y - 8 * scale, 2 * scale, 2 * scale); // Top left of X
-      ctx.fillRect(x + 33 * scale, y - 8 * scale, 2 * scale, 2 * scale); // Top right of X
-      ctx.fillRect(x + 31 * scale, y - 6 * scale, 2 * scale, 2 * scale); // Center of X
-      ctx.fillRect(x + 29 * scale, y - 4 * scale, 2 * scale, 2 * scale); // Bottom left of X
-      ctx.fillRect(x + 33 * scale, y - 4 * scale, 2 * scale, 2 * scale); // Bottom right of X
-      
-      // Eyes
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(x + 16 * scale, y + 20 * scale, 6 * scale, 6 * scale); // Left eye
-      
-      // Cyber eye (right eye)
-      ctx.fillStyle = '#003366'; // Dark blue base
-      ctx.fillRect(x + 26 * scale, y + 20 * scale, 8 * scale, 8 * scale); // Cyber eye base
-      
-      // Add more detail to cyber eye
-      ctx.fillStyle = '#001133'; // Darker blue for shadow
-      ctx.fillRect(x + 26 * scale, y + 20 * scale, 2 * scale, 8 * scale); // Left edge
-      ctx.fillRect(x + 26 * scale, y + 20 * scale, 8 * scale, 2 * scale); // Top edge
-      
-      ctx.fillStyle = '#FFCC00'; // Gold center
-      ctx.fillRect(x + 28 * scale, y + 22 * scale, 4 * scale, 4 * scale); // Cyber eye glow
-      
-      // Highlight in cyber eye
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(x + 28 * scale, y + 22 * scale, 2 * scale, 2 * scale); // Small highlight
-      
-      // Mouth/smile
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(x + 16 * scale, y + 30 * scale, 16 * scale, 4 * scale); // Smile
-      
-      // Teeth details
-      ctx.fillStyle = '#000022';
-      ctx.fillRect(x + 19 * scale, y + 30 * scale, 2 * scale, 1 * scale); // Tooth separator
-      ctx.fillRect(x + 23 * scale, y + 30 * scale, 2 * scale, 1 * scale); // Tooth separator
-      ctx.fillRect(x + 27 * scale, y + 30 * scale, 2 * scale, 1 * scale); // Tooth separator
-      
-      // Orange beard - more dense and vibrant
-      ctx.fillStyle = '#FF6600';
-      for (let beardY = 0; beardY < 18; beardY += 4) {
-        for (let beardX = -8; beardX < 24; beardX += 4) {
-          if (Math.random() > 0.1 || beardY < 8) { // More density (0.1 instead of 0.2)
-            ctx.fillRect(x + (16 + beardX) * scale, y + (34 + beardY) * scale, 4 * scale, 4 * scale);
-          }
-        }
+      // Only draw if image is loaded
+      if (!imageLoaded || !jaxImageRef.current) {
+        // Fallback: draw a simple placeholder using reasonable dimensions
+        const placeholderWidth = 48 * jax.scale;
+        const placeholderHeight = 142 * jax.scale;
+        ctx.fillStyle = '#003399';
+        ctx.fillRect(x, y, placeholderWidth, placeholderHeight);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '16px Arial';
+        ctx.fillText('Loading...', x + 10, y + placeholderHeight / 2);
+        return;
       }
+
+      const img = jaxImageRef.current;
       
-      // Beard highlight - more highlights for volume
-      ctx.fillStyle = '#FF9933';
-      for (let beardX = -4; beardX < 20; beardX += 6) { // More highlights (step 6 instead of 8)
-        ctx.fillRect(x + (16 + beardX) * scale, y + 34 * scale, 4 * scale, 4 * scale);
-        ctx.fillRect(x + (14 + beardX) * scale, y + 38 * scale, 4 * scale, 4 * scale); // Second row of highlights
-      }
+      // Calculate dimensions using natural image size and scale factor
+      const scaledWidth = img.naturalWidth * jax.scale;
+      const scaledHeight = img.naturalHeight * jax.scale;
       
-      // Body - Navy Blue uniform
-      ctx.fillStyle = '#003399'; // Darker navy blue
-      ctx.fillRect(x + 8 * scale, y + 50 * scale, 32 * scale, 50 * scale); // Torso
+      // Draw the static JAX image with proper aspect ratio
+      ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
       
-      // Red trim on uniform - thicker and more pronounced
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(x + 8 * scale, y + 50 * scale, 32 * scale, 2 * scale); // Top trim (collar)
-      ctx.fillRect(x + 8 * scale, y + 50 * scale, 2 * scale, 50 * scale); // Left trim
-      ctx.fillRect(x + 38 * scale, y + 50 * scale, 2 * scale, 50 * scale); // Right trim
-      ctx.fillRect(x + 8 * scale, y + 98 * scale, 32 * scale, 2 * scale); // Bottom trim
-      
-      // Center line (buttons area)
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(x + 22 * scale, y + 50 * scale, 2 * scale, 50 * scale); // Center red line
-      
-      // Gold buttons - more buttons for detailed uniform
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(x + 26 * scale, y + 55 * scale, 4 * scale, 4 * scale); // Top button
-      ctx.fillRect(x + 26 * scale, y + 65 * scale, 4 * scale, 4 * scale); // Upper middle button
-      ctx.fillRect(x + 26 * scale, y + 75 * scale, 4 * scale, 4 * scale); // Lower middle button
-      ctx.fillRect(x + 26 * scale, y + 85 * scale, 4 * scale, 4 * scale); // Bottom button
-      
-      // Epaulettes (shoulder decorations) - more detailed
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(x + 6 * scale, y + 50 * scale, 8 * scale, 6 * scale); // Left epaulette
-      ctx.fillRect(x + 34 * scale, y + 50 * scale, 8 * scale, 6 * scale); // Right epaulette
-      
-      // Epaulette details
-      ctx.fillStyle = '#FF9900'; // Darker gold for detail
-      ctx.fillRect(x + 8 * scale, y + 52 * scale, 4 * scale, 2 * scale); // Left epaulette detail
-      ctx.fillRect(x + 36 * scale, y + 52 * scale, 4 * scale, 2 * scale); // Right epaulette detail
-      
-      // Belt
-      ctx.fillStyle = '#663311';
-      ctx.fillRect(x + 8 * scale, y + 90 * scale, 32 * scale, 8 * scale);
-      
-      // Belt buckle - more detailed gold buckle
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(x + 18 * scale, y + 90 * scale, 12 * scale, 8 * scale);
-      ctx.fillStyle = '#884400';
-      ctx.fillRect(x + 20 * scale, y + 92 * scale, 8 * scale, 4 * scale); // Buckle detail
-      
-      // Legs - Navy blue
-      ctx.fillStyle = '#003399';
-      ctx.fillRect(x + 12 * scale, y + 98 * scale, 10 * scale, 32 * scale); // Left leg
-      ctx.fillRect(x + 26 * scale, y + 98 * scale, 10 * scale, 32 * scale); // Right leg
-      
-      // Red trim on legs
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(x + 12 * scale, y + 122 * scale, 10 * scale, 2 * scale); // Left leg trim
-      ctx.fillRect(x + 26 * scale, y + 122 * scale, 10 * scale, 2 * scale); // Right leg trim
-      
-      // Brown boots - taller and more detailed
-      ctx.fillStyle = '#663311';
-      ctx.fillRect(x + 12 * scale, y + 130 * scale, 10 * scale, 12 * scale); // Left boot
-      ctx.fillRect(x + 26 * scale, y + 130 * scale, 10 * scale, 12 * scale); // Right boot
-      
-      // Boot details
-      ctx.fillStyle = '#442200';
-      ctx.fillRect(x + 12 * scale, y + 136 * scale, 10 * scale, 6 * scale); // Left boot detail
-      ctx.fillRect(x + 26 * scale, y + 136 * scale, 10 * scale, 6 * scale); // Right boot detail
-      
-      // Gold boot trim
-      ctx.fillStyle = '#FFCC00';
-      ctx.fillRect(x + 12 * scale, y + 130 * scale, 10 * scale, 2 * scale); // Left boot top trim
-      ctx.fillRect(x + 26 * scale, y + 130 * scale, 10 * scale, 2 * scale); // Right boot top trim
-      
-      // Arms
-      ctx.fillStyle = '#003399';
-      ctx.fillRect(x * scale, y + 54 * scale, 8 * scale, 26 * scale); // Left arm
-      ctx.fillRect(x + 40 * scale, y + 54 * scale, 8 * scale, 26 * scale); // Right arm
-      
-      // Red trim on arms
-      ctx.fillStyle = '#DD0000';
-      ctx.fillRect(x * scale, y + 70 * scale, 8 * scale, 2 * scale); // Left arm trim
-      ctx.fillRect(x + 40 * scale, y + 70 * scale, 8 * scale, 2 * scale); // Right arm trim
-      
-      // Hands
-      ctx.fillStyle = '#FFA755';
-      ctx.fillRect(x * scale, y + 80 * scale, 8 * scale, 8 * scale); // Left hand
-      ctx.fillRect(x + 40 * scale, y + 80 * scale, 8 * scale, 8 * scale); // Right hand
-      
-      // Propeller (when flying)
+      // Add propeller animation when flying
       if (flying) {
-        const propellerX = x + 24;
-        const propellerY = y - 10;
-        const propellerSize = 24;
-        
-        // Draw propeller mount
-        ctx.fillStyle = '#555555';
-        ctx.fillRect(x + 20, y - 16, 8, 6);
-        
-        // Draw propeller blades with enhanced detail
-        ctx.save();
-        ctx.translate(propellerX, propellerY);
-        ctx.rotate(jax.propellerAngle);
-        
-        // Update propeller angle for animation
-        jax.propellerAngle += jax.propellerSpeed;
-        
-        // Draw 4 blades instead of just 2
-        ctx.fillStyle = '#444444';
-        ctx.fillRect(-propellerSize / 2, -2, propellerSize, 4); // Horizontal blade
-        ctx.fillRect(-2, -propellerSize / 2, 4, propellerSize); // Vertical blade
-        
-        // Add highlight to blades
-        ctx.fillStyle = '#666666';
-        ctx.fillRect(-propellerSize / 3, -1, propellerSize / 1.5, 2); // Horizontal highlight
-        ctx.fillRect(-1, -propellerSize / 3, 2, propellerSize / 1.5); // Vertical highlight
-        
-        // Add propeller center
-        ctx.fillStyle = '#888888';
-        ctx.beginPath();
-        ctx.arc(0, 0, 4, 0, Math.PI * 2);
-        ctx.fill();
-        
-        ctx.restore();
-        
-        // Flight effects - jet flames when flying
-        if (Math.random() > 0.3) {
-          // Random flickering jet flames
-          const flameColors = ['#FFCC00', '#FF9900', '#FF6600', '#FF3300']; // Yellow to red gradient
-          
-          // Left boot jet
-          for (let i = 0; i < 3; i++) {
-            const flameSize = (Math.random() * 6 + 6) * scale;
-            const flameX = x + 16 * scale;
-            const flameY = y + 142 * scale + i * 5 * scale;
-            const colorIndex = Math.floor(Math.random() * flameColors.length);
-            
-            ctx.fillStyle = flameColors[colorIndex];
-            ctx.beginPath();
-            ctx.moveTo(flameX, flameY);
-            ctx.lineTo(flameX - flameSize / 2, flameY + flameSize);
-            ctx.lineTo(flameX + flameSize / 2, flameY + flameSize);
-            ctx.closePath();
-            ctx.fill();
-          }
-          
-          // Right boot jet
-          for (let i = 0; i < 3; i++) {
-            const flameSize = (Math.random() * 6 + 6) * scale;
-            const flameX = x + 32 * scale;
-            const flameY = y + 142 * scale + i * 5 * scale;
-            const colorIndex = Math.floor(Math.random() * flameColors.length);
-            
-            ctx.fillStyle = flameColors[colorIndex];
-            ctx.beginPath();
-            ctx.moveTo(flameX, flameY);
-            ctx.lineTo(flameX - flameSize / 2, flameY + flameSize);
-            ctx.lineTo(flameX + flameSize / 2, flameY + flameSize);
-            ctx.closePath();
-            ctx.fill();
-          }
-        }
+        drawPropeller(x, y);
+        drawJetpackFire(x, y, scaledWidth, scaledHeight);
       }
     };
     
@@ -750,16 +563,14 @@ const JaxAdventure = () => {
         ctx.stroke();
       }
       
-      // Text on the sun (only in final scenes)
-      if (currentSceneIndex >= scenes.findIndex(s => s.name === "finalText")) {
-        // Make the text much bigger and reduce line spacing, and move it up higher
-        ctx.font = `bold ${Math.floor(sunRadius * 0.22)}px 'VT323', monospace`;
-        ctx.fillStyle = '#FFFFFF';
-        ctx.textAlign = 'center';
-        // Move both lines up higher in the sun
-        ctx.fillText("COMMAND YOUR FUTURE.", sunCenterX, sunCenterY - sunRadius * 0.32);
-        ctx.fillText("NAVIGATE WITH POWER.", sunCenterX, sunCenterY - sunRadius * 0.10);
-      }
+      // Text on the sun - always show in final scene
+      // Make the text much bigger and reduce line spacing, and move it up higher
+      ctx.font = `bold ${Math.floor(sunRadius * 0.22)}px 'VT323', monospace`;
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'center';
+      // Move both lines up higher in the sun
+      ctx.fillText("COMMAND YOUR FUTURE.", sunCenterX, sunCenterY - sunRadius * 0.32);
+      ctx.fillText("NAVIGATE WITH POWER.", sunCenterX, sunCenterY - sunRadius * 0.10);
       
       // Reset opacity
       ctx.globalAlpha = 1;
@@ -890,6 +701,15 @@ const JaxAdventure = () => {
       ctx.fillStyle = black;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
+      // Calculate JAX dimensions dynamically
+      let jaxWidth = 48 * jax.scale; // fallback dimensions
+      let jaxHeight = 142 * jax.scale;
+      
+      if (imageLoaded && jaxImageRef.current) {
+        jaxWidth = jaxImageRef.current.naturalWidth * jax.scale;
+        jaxHeight = jaxImageRef.current.naturalHeight * jax.scale;
+      }
+      
       // Update scene index
       if (frameCount - sceneStartFrame >= scenes[currentSceneIndex].duration) {
         sceneStartFrame = frameCount;
@@ -906,149 +726,32 @@ const JaxAdventure = () => {
       const sceneName = scenes[currentSceneIndex].name;
       const sceneProgress = (frameCount - sceneStartFrame) / scenes[currentSceneIndex].duration;
       
-      // Update JAX position based on scene
-      if (sceneName === "oceanJourney" || sceneName === "oceanText1") {
-        jax.x = canvas.width / 3 - jax.width - 50;
-        // Bobbing effect
-        jax.y = canvas.height / 2 + Math.sin(frameCount * jax.bobSpeed) * jax.bobAmount;
-      } else if (sceneName === "oceanObstacles" || sceneName === "oceanText2" || sceneName === "oceanText3") {
-        jax.x = canvas.width / 3 - jax.width - 50;
-        // More intense bobbing
-        jax.y = canvas.height / 2 + Math.sin(frameCount * jax.bobSpeed * 1.5) * jax.bobAmount * 1.5;
-      } else if (sceneName === "spaceTransition") {
-        jax.x = canvas.width / 3 - jax.width - 50;
-        // Start flying upward
+      // Update JAX position based on scene (base position)
+      let baseX, baseY;
+      
+      if (sceneName === "finalScene") {
+        // Position JAX in the final retrowave grid scene
+        baseX = canvas.width / 2 - jaxWidth / 2;
+        baseY = canvas.height * 0.38 - jaxHeight / 2 + Math.cos(frameCount * 0.02) * 10;
         jax.flying = true;
-        jax.flyHeight = sceneProgress * 100;
-        jax.y = (canvas.height / 2) - jax.flyHeight;
-      } else if (sceneName === "spaceJourney" || sceneName === "spaceText") {
-        jax.x = canvas.width / 3 - jax.width - 50 + Math.sin(frameCount * 0.02) * 20;
-        // Flying in space - floating up and down
-        jax.flying = true;
-        const floatAmount = Math.sin(frameCount * jax.flySpeed) * 30;
-        jax.y = (canvas.height / 3) + floatAmount;
-      } else if (sceneName === "gridTransition") {
-        jax.x = canvas.width / 3 - jax.width - 50 + sceneProgress * 100;
-        jax.y = (canvas.height / 3) + 50 * sceneProgress;
-        jax.flying = true;
-      } else if (sceneName === "gridJourney" || sceneName === "finalText" || sceneName === "startButton") {
-        // Move JAX higher and more centered on the sun
-        jax.x = canvas.width / 2 - jax.width / 2;
-        jax.y = canvas.height * 0.38 - jax.height / 2 + Math.cos(frameCount * 0.02) * 10;
+      } else {
+        // Default position
+        baseX = canvas.width / 2 - jaxWidth / 2;
+        baseY = canvas.height / 2;
         jax.flying = true;
       }
+
+      // Apply user control offset to the base position
+      jax.x = baseX + userOffsetRef.current.x;
+      jax.y = baseY + userOffsetRef.current.y;
+
+      // Keep JAX within canvas bounds
+      jax.x = Math.max(0, Math.min(canvas.width - jaxWidth, jax.x));
+      jax.y = Math.max(0, Math.min(canvas.height - jaxHeight, jax.y));
       
       // Render scenes
-      if (sceneName === "intro") {
-        // Just black screen, nothing to draw
-      } else if (sceneName === "oceanJourney" || sceneName === "oceanText1" || 
-                 sceneName === "oceanText2" || sceneName === "oceanText3" || sceneName === "oceanObstacles") {
-        // Ocean scene
-        if (sceneName === "oceanText2") {
-          // Exaggerated pixel-art waves for confusion scene
-          drawWater();
-          drawExaggeratedWaves();
-        } else {
-          drawWater();
-        }
-        drawBoat(boatX, boatY + Math.sin(frameCount * boat.bobSpeed) * boat.bobAmount);
-        // Floating neon symbols for confusion/complexity/hype
-        if (sceneName === "oceanText2" || sceneName === "oceanText3" || sceneName === "oceanObstacles") {
-          // Animate floating symbols
-          for (let i = 0; i < floatingSymbols.length; i++) {
-            // Orbit around JAX/boat or float in water
-            const angle = (frameCount * 0.015 + i * 0.7) % (Math.PI * 2);
-            const radius = 90 + 30 * Math.sin(frameCount * 0.01 + i);
-            let sx = boatX + boat.width / 2 + Math.cos(angle) * radius;
-            let sy = boatY + boat.height / 2 + Math.sin(angle) * radius * 0.6;
-            // Some symbols float in the water
-            if (i % 3 === 2) {
-              sx = 120 + i * 70 + Math.sin(frameCount * 0.02 + i) * 18;
-              sy = waterLevel + 30 + Math.cos(frameCount * 0.03 + i) * 8;
-            }
-            drawNeonSymbol(floatingSymbols[i].symbol, sx, sy, floatingSymbols[i].color, 32);
-          }
-        }
-        // Draw explosion for obstacle scene
-        if (sceneName === "oceanObstacles") {
-          const explosionProgress = ((frameCount - sceneStartFrame) % 60) / 60;
-          if (explosionProgress < 0.5) {
-            drawExplosion(
-              canvas.width * 0.7, 
-              waterLevel - 50, 
-              30 + explosionProgress * 20, 
-              explosionProgress * 30
-            );
-          }
-        }
-      } else if (sceneName === "explosionScene") {
-        // Dedicated explosion scene
-        drawWater();
-        drawBoat(boatX, boatY + Math.sin(frameCount * boat.bobSpeed) * boat.bobAmount);
-        
-        const explosionSize = 50 + sceneProgress * 50;
-        drawExplosion(
-          canvas.width * 0.7,
-          waterLevel - 100,
-          explosionSize,
-          sceneProgress * 30
-        );
-      } else if (sceneName === "spaceTransition") {
-        // Mix of ocean and space
-        const transitionProgress = sceneProgress;
-        
-        // Draw water with fading opacity
-        ctx.globalAlpha = 1 - transitionProgress;
-        drawWater();
-        ctx.globalAlpha = 1;
-        
-        // Keep the confusion symbols visible during transition
-        const symbolsOpacity = Math.max(0, 1 - transitionProgress * 1.5); // Fade out slowly
-        ctx.globalAlpha = symbolsOpacity;
-        for (let i = 0; i < floatingSymbols.length; i++) {
-          // Position symbols around JAX as he flies
-          const angle = (frameCount * 0.015 + i * 0.7) % (Math.PI * 2);
-          const radius = 100 + 20 * Math.sin(frameCount * 0.02 + i);
-          const sx = jax.x + jax.width/2 + Math.cos(angle) * radius;
-          const sy = jax.y + jax.height/2 + Math.sin(angle) * radius * 0.8;
-          drawNeonSymbol(floatingSymbols[i].symbol, sx, sy, floatingSymbols[i].color, 32);
-        }
-        ctx.globalAlpha = 1;
-        
-        // Draw stars with increasing opacity
-        ctx.globalAlpha = transitionProgress;
-        drawStars(100);
-        ctx.globalAlpha = 1;
-        
-        // Draw JAX flying
-        drawJax(jax.x, jax.y, true);
-      } else if (sceneName === "spaceJourney" || sceneName === "spaceText") {
-        // Space scene
-        ctx.fillStyle = black;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        drawStars(200);
-        drawJax(jax.x, jax.y, true);
-      } else if (sceneName === "gridTransition") {
-        // Mix of space and grid
-        const transitionProgress = sceneProgress;
-        
-        // Draw space with fading opacity
-        ctx.globalAlpha = 1 - transitionProgress;
-        ctx.fillStyle = black;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        drawStars(200);
-        ctx.globalAlpha = 1;
-        
-        // Draw grid with increasing opacity
-        ctx.globalAlpha = transitionProgress;
-        drawRetrowaveGrid();
-        ctx.globalAlpha = 1;
-        
-        // Draw JAX flying
-        drawJax(jax.x, jax.y, true);
-      } else if (sceneName === "gridJourney" || sceneName === "finalText" || sceneName === "startButton") {
-        // Grid scene
+      if (sceneName === "finalScene") {
+        // Final retrowave grid scene with text and controllable JAX
         drawRetrowaveGrid();
         drawJax(jax.x, jax.y, true);
       }
@@ -1074,10 +777,10 @@ const JaxAdventure = () => {
       // Stop animation if component unmounts
       setIsPlaying(false);
     };
-  }, [isPlaying]);
+  }, [isPlaying, imageLoaded]);
   
   return (
-    <div className="jax-animation-container">
+    <div className="jax-animation-container relative">
       <canvas 
         ref={canvasRef} 
         className="pixel-display"
@@ -1088,6 +791,11 @@ const JaxAdventure = () => {
           imageRendering: 'pixelated',
         }} 
       />
+      
+
+      
+      <style jsx>{`
+      `}</style>
     </div>
   );
 };

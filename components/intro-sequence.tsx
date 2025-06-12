@@ -5,6 +5,7 @@ import { Gamepad2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSound } from "@/components/sound-provider"
 import JaxAdventure from "@/components/jax-adventure-animation"
+import Image from "next/image"
 
 type IntroStep = 
   | "black" 
@@ -21,6 +22,12 @@ type IntroStep =
 export function IntroSequence({ onComplete }: { onComplete: () => void }) {
   const [currentStep, setCurrentStep] = useState<IntroStep>("black")
   const [skipIntro, setSkipIntro] = useState(false)
+  const [keysPressed, setKeysPressed] = useState({
+    ArrowUp: false,
+    ArrowDown: false,
+    ArrowLeft: false,
+    ArrowRight: false
+  })
   const { playSound } = useSound()
 
   // Handle the intro sequence steps
@@ -50,6 +57,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
 
   // Handle the "PRESS START" action
   const handlePressStart = () => {
+    console.log("Press Start button clicked!")
     playSound("click")
     playSound("background")
     setCurrentStep("complete")
@@ -68,15 +76,21 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center overflow-hidden">
-      {/* Skip button */}
-      <button onClick={handleSkipIntro} className="absolute top-4 right-4 text-gray-500 hover:text-white text-sm z-50">
-        SKIP INTRO
-      </button>
+    <div className="fixed inset-0 bg-black z-50 flex flex-col overflow-hidden">
+      {/* Logo at the top - always visible */}
+      <div className="flex justify-center pt-4 pb-2 z-40">
+        <Image
+          src="/images/aiclogo.png"
+          alt="AI CAPTAINS"
+          width={400}
+          height={200}
+          className="object-contain"
+        />
+      </div>
 
-      {/* TV Frame (4:3) */}
-      <div className="relative flex items-center justify-center w-full h-full z-10">
-        <div className="tv-frame bg-black border-8 border-yellow-500 rounded-2xl shadow-2xl flex items-center justify-center mx-auto aspect-[4/3] w-[90vw] max-w-[960px] h-auto max-h-[80vh] overflow-hidden relative">
+      {/* TV Frame Container - adjusted for smaller size */}
+      <div className="flex-1 flex items-center justify-center px-4 z-10">
+        <div className="tv-frame bg-black border-8 border-yellow-500 rounded-2xl shadow-2xl flex items-center justify-center aspect-[4/3] w-[80vw] max-w-[720px] h-auto max-h-[50vh] overflow-hidden relative">
           {/* CRT overlay */}
           <div className="absolute inset-0 pointer-events-none crt-effect z-20"></div>
           
@@ -85,64 +99,63 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
           
           {/* JAX Adventure Animation */}
           <div className="w-full h-full">
-            <JaxAdventure />
+            <JaxAdventure onKeysPressed={setKeysPressed} />
           </div>
 
-          {/* Text overlays inside TV */}
-          <div className="absolute bottom-12 left-0 right-0 z-30 flex flex-col items-center justify-center pointer-events-none">
-            <div className="w-full max-w-2xl md:w-3/4 mx-auto text-center px-4 py-2 bg-black/40 rounded-lg" style={{ fontFamily: 'VT323, monospace' }}>
-              {/* Ocean intro text */}
-              {currentStep === "ocean-intro" && (
-                <div className="animate-fade-in">
-                  <p className="text-cyan-400 text-2xl md:text-3xl mb-2">In the sea of shiny no-code platforms...</p>
-                </div>
-              )}
-              {/* Ocean navigation text */}
-              {currentStep === "ocean-navigate" && (
-                <div className="animate-fade-in">
-                  <p className="text-cyan-400 text-2xl md:text-3xl mb-2">The AI Revolution has brought unprecedented opportunities...</p>
-                </div>
-              )}
-              {/* Space transformation text */}
-              {currentStep === "space-transform" && (
-                <div className="animate-fade-in">
-                  <p className="text-cyan-400 text-2xl md:text-3xl mb-2">But also confusion. Complexity. Hype.</p>
-                </div>
-              )}
-              {/* Space navigation text */}
-              {currentStep === "space-navigate" && (
-                <div className="animate-fade-in">
-                  <p className="text-cyan-400 text-2xl md:text-3xl mb-2">Most are drifting. Few are navigating.</p>
-                </div>
-              )}
-              {/* Final destination text */}
-              {currentStep === "final-destination" && (
-                <div className="animate-fade-in">
-                  <p className="text-cyan-400 text-2xl md:text-3xl mb-2">COMMAND YOUR FUTURE.</p>
-                  <p className="text-cyan-400 text-2xl md:text-3xl mt-2">NAVIGATE WITH POWER.</p>
-                </div>
-              )}
+
+        </div>
+      </div>
+
+      {/* Arrow Key Controller - Outside TV frame */}
+      <div className="absolute bottom-8 right-8 z-60">
+        <div className="arrow-key-overlay bg-black/80 border border-yellow-500 rounded-lg p-4">
+          <div className="grid grid-cols-3 gap-1">
+            {/* Top row */}
+            <div></div>
+            <div 
+              className={`arrow-key ${keysPressed.ArrowUp ? 'active' : ''}`}
+              style={{ gridColumn: 2 }}
+            >
+              ↑
             </div>
+            <div></div>
+            
+            {/* Middle row */}
+            <div className={`arrow-key ${keysPressed.ArrowLeft ? 'active' : ''}`}>
+              ←
+            </div>
+            <div></div>
+            <div className={`arrow-key ${keysPressed.ArrowRight ? 'active' : ''}`}>
+              →
+            </div>
+            
+            {/* Bottom row */}
+            <div></div>
+            <div 
+              className={`arrow-key ${keysPressed.ArrowDown ? 'active' : ''}`}
+              style={{ gridColumn: 2 }}
+            >
+              ↓
+            </div>
+            <div></div>
           </div>
         </div>
       </div>
 
-      {/* Press Start Button */}
-      {currentStep === "press-start" && (
-        <div className="mt-12 animate-bounce z-20">
-          <Button
-            variant="outline"
-            className="retro-button bg-black text-yellow-500 hover:bg-yellow-500 hover:text-black px-8 py-6 text-xl"
-            onClick={handlePressStart}
-          >
-            <Gamepad2 className="mr-2 h-6 w-6" /> PRESS START
-          </Button>
-        </div>
-      )}
+      {/* Press Start Button - Always visible at bottom */}
+      <div className="flex justify-center pb-20 z-50 relative">
+        <button
+          className={`retro-button bg-black text-yellow-500 hover:bg-yellow-500 hover:text-black px-6 py-4 text-lg cursor-pointer border border-yellow-500 rounded-md inline-flex items-center justify-center gap-2 ${currentStep === "press-start" ? "animate-bounce" : ""}`}
+          onClick={handlePressStart}
+          style={{ pointerEvents: 'auto' }}
+        >
+          <Gamepad2 className="mr-2 h-5 w-5" /> PRESS START
+        </button>
+      </div>
 
       {/* Nintendo-style copyright text */}
-      <div className="absolute bottom-4 text-gray-500 text-xs">
-        © 2024 JAYEYE. ALL RIGHTS RESERVED.
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-gray-500 text-xs">
+        © 2025 AI CAPTAINS LLC. ALL RIGHTS RESERVED.
       </div>
 
       {/* CRT and Scanline CSS */}
@@ -190,6 +203,33 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        
+        .arrow-key-overlay {
+          backdrop-filter: blur(4px);
+          box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+        }
+        
+        .arrow-key {
+          width: 32px;
+          height: 32px;
+          border: 1px solid #fbbf24;
+          background: rgba(0, 0, 0, 0.7);
+          color: #fbbf24;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          font-weight: bold;
+          border-radius: 4px;
+          transition: all 0.1s ease;
+        }
+        
+        .arrow-key.active {
+          background: #fbbf24;
+          color: #000;
+          box-shadow: 0 0 8px rgba(255, 204, 0, 0.6);
+          transform: scale(0.95);
         }
       `}</style>
     </div>
