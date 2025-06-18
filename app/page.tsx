@@ -245,10 +245,13 @@ function AICaptainsContent() {
                   <div className="mt-4 text-center">
                     <Button
                       className="retro-button bg-red-600 text-yellow-400 hover:bg-yellow-400 hover:text-red-600 font-bold px-8 py-2 text-lg"
-                      onClick={handlePowerUpNowClick}
+                      onClick={handleButtonClick}
                       onMouseEnter={handleHover}
+                      asChild
                     >
-                      POWER UP NOW <Zap className="ml-2 h-5 w-5 blink" />
+                      <a href="https://cohort.aicaptains.ai" target="_blank" rel="noopener noreferrer">
+                        POWER UP NOW <Zap className="ml-2 h-5 w-5 blink" />
+                      </a>
                     </Button>
                   </div>
                 </div>
