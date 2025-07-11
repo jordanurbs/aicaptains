@@ -265,8 +265,11 @@ function AICaptainsContent() {
                 </div>
                 <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
                   {/* Terminal Navigation Toolkit */}
-                  <div
-                    className={`relative border-4 ${selectedItem === 0 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
+                  <Link
+                    href="https://toolkit.ai-captains.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`relative border-4 ${selectedItem === 0 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
                     onClick={() => {
                       setSelectedItem(0)
                       playSound("click")
@@ -290,11 +293,14 @@ function AICaptainsContent() {
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Implementation Call */}
-                  <div
-                    className={`relative border-4 ${selectedItem === 1 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
+                  <Link
+                    href="https://calls.ai-captains.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`relative border-4 ${selectedItem === 1 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
                     onClick={() => {
                       setSelectedItem(1)
                       playSound("click")
@@ -318,11 +324,14 @@ function AICaptainsContent() {
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* AI Captains Academy */}
-                  <div
-                    className={`relative border-4 ${selectedItem === 2 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
+                  <Link
+                    href="https://aicaptains.academy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`relative border-4 ${selectedItem === 2 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
                     onClick={() => {
                       setSelectedItem(2)
                       playSound("click")
@@ -339,18 +348,21 @@ function AICaptainsContent() {
                       className="w-full object-cover"
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                      <p className="text-yellow-500 text-sm font-bold">AI CAPTAINS ACADEMY <span className="text-cyan-400 text-xs">(Coming Soon!)</span></p>
+                      <p className="text-yellow-500 text-sm font-bold">AI CAPTAINS ACADEMY</p>
                       <div className="flex mt-1">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </Link>
 
-                  {/* Co-Founder Program */}
-                  <div
-                    className={`relative border-4 ${selectedItem === 3 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer`}
+                  {/* Content Commander Challenge */}
+                  <Link
+                    href="https://ccc.ai-captains.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`relative border-4 ${selectedItem === 3 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
                     onClick={() => {
                       setSelectedItem(3)
                       playSound("click")
@@ -360,21 +372,21 @@ function AICaptainsContent() {
                     }}
                   >
                     <Image
-                      src="/images/cofounderprogram.png"
-                      alt="Executive Co-Founder Program"
+                      src="/images/tnt-boxart.png"
+                      alt="Content Commander Challenge"
                       width={200}
                       height={300}
                       className="w-full object-cover"
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                      <p className="text-yellow-500 text-sm font-bold">EXECUTIVE CO-FOUNDER PROGRAM</p>
+                      <p className="text-yellow-500 text-sm font-bold">CONTENT COMMANDER CHALLENGE</p>
                       <div className="flex mt-1">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
               </section>
 

@@ -80,7 +80,7 @@ export function RetroFooter({ className = "" }: RetroFooterProps) {
               onMouseEnter={handleHover}
               asChild
             >
-              <a href="https://cohort.aicaptains.ai" target="_blank" rel="noopener noreferrer">
+              <a href="https://ccc.ai-captains.com" target="_blank" rel="noopener noreferrer">
                 BECOME A CAPTAIN NOW
               </a>
             </Button>
