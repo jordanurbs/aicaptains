@@ -372,7 +372,7 @@ function AICaptainsContent() {
                     }}
                   >
                     <Image
-                      src="/images/tnt-boxart.png"
+                      src="/images/ccc-boxart.png"
                       alt="Content Commander Challenge"
                       width={200}
                       height={300}
