@@ -266,7 +266,7 @@ function AICaptainsContent() {
                 <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
                   {/* Terminal Navigation Toolkit */}
                   <Link
-                    href="https://toolkit.ai-captains.com"
+                    href="https://tnt.aicaptains.ai"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`relative border-4 ${selectedItem === 0 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
