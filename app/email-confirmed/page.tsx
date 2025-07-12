@@ -36,7 +36,7 @@ export default function EmailConfirmed() {
 
         {/* Bootcamp Begins */}
         <div className="mb-8">
-          <p className="text-white text-xl md:text-2xl font-medium">
+          <p className="text-cyan-400 retro-text text-xl md:text-2xl font-bold">
             And your Bootcamp begins!
           </p>
         </div>
