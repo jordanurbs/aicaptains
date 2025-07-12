@@ -54,7 +54,7 @@ export default function EmailConfirmed() {
             I've sent a confirmation email to your inbox.
           </p>
           <p className="text-gray-200 text-xl md:text-2xl">
-            Please check and click the link to confirm your email.
+            Please click the link to confirm your email address and you'll be on your way. (It might be in your spam or promotions folder.)
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export default function EmailConfirmed() {
             >
               Content Commander Challenge
             </Link>
-            {" "}is waiting for you.)
+            {" "}awaits you.)
           </p>
         </div>
       </div>
