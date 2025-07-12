@@ -22,14 +22,16 @@ export default function EmailConfirmed() {
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center">
-        {/* AI CAPTAINS Logo with Gradient Text */}
-        <div className="mb-4">
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold retro-text bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent leading-tight">
-            AI
-          </h1>
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold retro-text bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent leading-tight -mt-4">
-            CAPTAINS
-          </h1>
+        {/* AI CAPTAINS Logo Image */}
+        <div className="mb-8">
+          <Image
+            src="/images/aiclogo.png"
+            alt="AI CAPTAINS"
+            width={500}
+            height={250}
+            className="object-contain"
+            priority
+          />
         </div>
 
         {/* Time to build! */}
@@ -41,9 +43,9 @@ export default function EmailConfirmed() {
 
         {/* Main Heading */}
         <div className="mb-8">
-          <h2 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
-            You've made a powerful decision.
-          </h2>
+          <h1 className="text-cyan-400 retro-text text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
+            YOU'VE MADE A POWERFUL DECISION.
+          </h1>
         </div>
 
         {/* Confirmation Message */}
