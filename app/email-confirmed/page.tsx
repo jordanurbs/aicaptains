@@ -34,45 +34,44 @@ export default function EmailConfirmed() {
           />
         </div>
 
-        {/* Time to build! */}
+        {/* Bootcamp Begins */}
         <div className="mb-8">
           <p className="text-white text-xl md:text-2xl font-medium">
-            Time to build!
+            And your Bootcamp begins!
           </p>
         </div>
 
         {/* Main Heading */}
         <div className="mb-8">
-          <h1 className="text-cyan-400 retro-text text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
-            YOU'VE MADE A POWERFUL DECISION.
+          <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
+            Day 1 ("The AI Captain's Mindset")
+            <br />
+            is on its way to your inbox!
           </h1>
         </div>
 
-        {/* Confirmation Message */}
-        <div className="mb-8 max-w-3xl space-y-4">
-          <p className="text-gray-200 text-xl md:text-2xl">
-            I've sent a confirmation email to your inbox.
-          </p>
-          <p className="text-gray-200 text-xl md:text-2xl">
-            Please click the link to confirm your email address and you'll be on your way. (It might be in your spam or promotions folder.)
+        {/* Bootcamp Description */}
+        <div className="mb-8 max-w-4xl">
+          <p className="text-gray-200 text-lg md:text-xl leading-relaxed">
+            Over the next 5 days, you're going to be introduced to common uses of the command line and why it's essential to harness AI to its full power.
           </p>
         </div>
 
         {/* Content Commander Challenge Note */}
         <div className="max-w-4xl">
           <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
-            (BTW if you're ready NOW to kick your vibe coding into high gear,
+            Ready NOW to kick your command line skills into high gear?
             <br className="hidden sm:block" />
-            the{" "}
+            The{" "}
             <Link
               href="https://ccc.ai-captains.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-orange-400 hover:text-orange-300 transition-colors duration-200 font-semibold underline decoration-orange-400/50 hover:decoration-orange-300"
+              className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-semibold underline decoration-cyan-400/50 hover:decoration-cyan-300"
             >
               Content Commander Challenge
             </Link>
-            {" "}awaits you.)
+            {" "}is ready for you.
           </p>
         </div>
       </div>
