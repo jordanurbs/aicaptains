@@ -44,9 +44,7 @@ export default function EmailConfirmed() {
         {/* Main Heading */}
         <div className="mb-8">
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
-            Day 1 ("The AI Captain's Mindset")
-            <br />
-            is on its way to your inbox!
+            Lesson 1 is on its way to your inbox!
           </h1>
         </div>
 
