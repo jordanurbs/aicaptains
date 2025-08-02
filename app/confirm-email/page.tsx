@@ -65,12 +65,12 @@ export default function ConfirmEmail() {
             <br className="hidden sm:block" />
             the{" "}
             <Link 
-              href="https://ccc.ai-captains.com"
+              href="https://skool.com/aicaptains"
               target="_blank"
               rel="noopener noreferrer"
               className="text-orange-400 hover:text-orange-300 transition-colors duration-200 font-semibold underline decoration-orange-400/50 hover:decoration-orange-300"
             >
-              Content Commander Challenge
+              AI Captains Skool
             </Link>
             {" "}is waiting for you.)
           </p>

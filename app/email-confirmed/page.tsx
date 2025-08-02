@@ -58,18 +58,18 @@ export default function EmailConfirmed() {
         {/* Content Commander Challenge Note */}
         <div className="max-w-4xl">
           <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
-            Ready NOW to kick your command line skills into high gear?
+            Aching to learn to build the RIGHT way, as soon as possible?
             <br className="hidden sm:block" />
             The{" "}
             <Link
-              href="https://ccc.ai-captains.com"
+              href="https://skool.com/aicaptains"
               target="_blank"
               rel="noopener noreferrer"
               className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-semibold underline decoration-cyan-400/50 hover:decoration-cyan-300"
             >
-              Content Commander Challenge
+              AI Captains Skool
             </Link>
-            {" "}is ready for you.
+            {" "}teaches you how.
           </p>
         </div>
       </div>
