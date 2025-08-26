@@ -328,7 +328,7 @@ function AICaptainsContent() {
 
                   {/* AI Captains Academy */}
                   <Link
-                    href="https://aicaptains.academy"
+                    href="https://skool.com/aicaptains"
                     target="_blank"
                     rel="noopener noreferrer"
                     className={`relative border-4 ${selectedItem === 2 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
