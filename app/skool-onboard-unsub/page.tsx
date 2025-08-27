@@ -37,7 +37,7 @@ export default function Unsubscribed() {
         {/* Unsubscribed Status */}
         <div className="mb-8">
           <p className="text-cyan-400 retro-text text-xl md:text-2xl font-bold">
-            You've been unsubscribed!
+            OK, we'll stop sending you Skool onboarding emails!
           </p>
         </div>
 
@@ -51,7 +51,7 @@ export default function Unsubscribed() {
         {/* Unsubscribe Description */}
         <div className="mb-8 max-w-4xl">
           <p className="text-gray-200 text-lg md:text-xl leading-relaxed">
-            Your email has been unsubscribed as you've requested.
+            You won't receive any more Skool onboarding emails from us.
           </p>
         </div>
 
