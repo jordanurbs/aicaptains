@@ -249,7 +249,7 @@ function AICaptainsContent() {
                       onMouseEnter={handleHover}
                       asChild
                     >
-                      <a href="https://cohort.aicaptains.ai" target="_blank" rel="noopener noreferrer">
+                      <a href="https://skool.com/aicaptains" target="_blank" rel="noopener noreferrer">
                         POWER UP NOW <Zap className="ml-2 h-5 w-5 blink" />
                       </a>
                     </Button>
