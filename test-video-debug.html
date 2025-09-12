@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Debug Test</title>
+</head>
+<body>
+    <h1>Video Debug Test</h1>
+    
+    <h2>Test 1: Basic Video Loading</h2>
+    <video id="testVideo" width="400" height="300" controls preload="auto" playsInline>
+        <source src="/videos/intro-teaser-v1.mp4" type="video/mp4">
+        <source src="/videos/intro-teaser-v1.webm" type="video/webm">
+        Your browser does not support the video tag.
+    </video>
+    
+    <h2>Test 2: Autoplay with Muted</h2>
+    <video id="autoplayVideo" width="400" height="300" controls preload="auto" playsInline muted autoplay>
+        <source src="/videos/intro-teaser-v1.mp4" type="video/mp4">
+        <source src="/videos/intro-teaser-v1.webm" type="video/webm">
+        Your browser does not support the video tag.
+    </video>
+    
+    <div id="debugInfo">
+        <h2>Debug Information</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            const p = document.createElement('p');
+            p.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            log.appendChild(p);
+            console.log(message);
+        }
+        
+        const testVideo = document.getElementById('testVideo');
+        const autoplayVideo = document.getElementById('autoplayVideo');
+        
+        // Test basic video events
+        testVideo.addEventListener('loadstart', () => addLog('Test video: Load started'));
+        testVideo.addEventListener('canplay', () => addLog('Test video: Can play'));
+        testVideo.addEventListener('loadeddata', () => addLog('Test video: Data loaded'));
+        testVideo.addEventListener('error', (e) => addLog(`Test video error: ${e.target.error?.message || 'Unknown error'}`));
+        
+        // Test autoplay video events  
+        autoplayVideo.addEventListener('loadstart', () => addLog('Autoplay video: Load started'));
+        autoplayVideo.addEventListener('canplay', () => addLog('Autoplay video: Can play'));
+        autoplayVideo.addEventListener('loadeddata', () => addLog('Autoplay video: Data loaded'));
+        autoplayVideo.addEventListener('play', () => addLog('Autoplay video: Started playing'));
+        autoplayVideo.addEventListener('error', (e) => addLog(`Autoplay video error: ${e.target.error?.message || 'Unknown error'}`));
+        
+        // Test programmatic play
+        function testPlay() {
+            addLog('Testing programmatic play...');
+            const promise = testVideo.play();
+            if (promise !== undefined) {
+                promise
+                    .then(() => addLog('Programmatic play successful'))
+                    .catch((error) => addLog(`Programmatic play failed: ${error.message}`));
+            }
+        }
+        
+        // Add test button
+        const button = document.createElement('button');
+        button.textContent = 'Test Programmatic Play';
+        button.onclick = testPlay;
+        document.body.appendChild(button);
+        
+        addLog('Video debug test initialized');
+    </script>
+</body>
+</html>

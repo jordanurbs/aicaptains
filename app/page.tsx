@@ -113,8 +113,6 @@ function AICaptainsContent() {
       {/* Show intro sequence if needed */}
       {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
 
-      {/* Scanline effect */}
-      <div className="scanline"></div>
 
       {/* Grid background - only show when intro is NOT active */}
       {!showIntro && <div className="grid-bg fixed inset-0 z-0"></div>}

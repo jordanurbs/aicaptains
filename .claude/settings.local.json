@@ -6,7 +6,12 @@
       "Read(//Users/jordanurbs/Desktop/**)",
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
-      "WebFetch(domain:localhost)"
+      "WebFetch(domain:localhost)",
+      "Bash(ffprobe:*)",
+      "Bash(ffmpeg:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "mcp__ide__getDiagnostics"
     ],
     "deny": [],
     "ask": []
