@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Read(//var/folders/jl/dpj5x7p17vxb02jjj0xww2pr0000gn/T/TemporaryItems/NSIRD_screencaptureui_c7eEZx/**)",
+      "Read(//Users/jordanurbs/Desktop/**)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:localhost)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

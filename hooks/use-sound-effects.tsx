@@ -9,6 +9,7 @@ export function useSoundEffects() {
   const [isLoaded, setIsLoaded] = useState(false)
   const backgroundMusicRef = useRef<HTMLAudioElement | null>(null)
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false)
+  const [originalBackgroundVolume, setOriginalBackgroundVolume] = useState(0.2)
   
   const [audioElements, setAudioElements] = useState<Record<SoundType, HTMLAudioElement | null>>({
     click: null,
@@ -44,6 +45,7 @@ export function useSoundEffects() {
 
     setAudioElements(sounds)
     backgroundMusicRef.current = sounds.background
+    setOriginalBackgroundVolume(sounds.background.volume)
     setIsLoaded(true)
 
     // Cleanup
@@ -124,5 +126,37 @@ export function useSoundEffects() {
     });
   }, [audioElements, isBackgroundMusicPlaying]);
 
-  return { playSound, toggleMute, isMuted, isLoaded, isBackgroundMusicPlaying }
+  // Fade background music
+  const fadeBackgroundMusic = useCallback((targetVolume: number, duration: number = 1000) => {
+    if (!backgroundMusicRef.current || !isBackgroundMusicPlaying) return
+
+    const audio = backgroundMusicRef.current
+    const startVolume = audio.volume
+    const volumeChange = targetVolume - startVolume
+    const steps = 50
+    const stepTime = duration / steps
+    const volumeStep = volumeChange / steps
+
+    let currentStep = 0
+    const fadeInterval = setInterval(() => {
+      currentStep++
+      const newVolume = startVolume + (volumeStep * currentStep)
+      audio.volume = Math.max(0, Math.min(1, newVolume))
+
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval)
+        audio.volume = targetVolume
+      }
+    }, stepTime)
+  }, [isBackgroundMusicPlaying])
+
+  return { 
+    playSound, 
+    toggleMute, 
+    isMuted, 
+    isLoaded, 
+    isBackgroundMusicPlaying,
+    fadeBackgroundMusic,
+    originalBackgroundVolume 
+  }
 }

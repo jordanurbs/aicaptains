@@ -145,7 +145,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       {/* Press Start Button - Always visible at bottom */}
       <div className="flex justify-center pb-20 z-50 relative">
         <button
-          className={`retro-button bg-black text-yellow-500 hover:bg-yellow-500 hover:text-black px-6 py-4 text-lg cursor-pointer border border-yellow-500 rounded-md inline-flex items-center justify-center gap-2 ${currentStep === "press-start" ? "animate-bounce" : ""}`}
+          className={`retro-button bg-black text-yellow-500 hover:bg-yellow-500 hover:text-black px-12 py-6 button-text cursor-pointer border border-yellow-500 rounded-md inline-flex items-center justify-center gap-2 ${currentStep === "press-start" ? "animate-bounce" : ""}`}
           onClick={handlePressStart}
           style={{ pointerEvents: 'auto' }}
         >

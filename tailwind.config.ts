@@ -19,6 +19,13 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["CourierPrimeCode", "monospace"],
+        mono: ["CourierPrimeCode", "monospace"],
+      },
+      fontSize: {
+        'sm': '1.2rem', // Override default 0.875rem to 1.2rem
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

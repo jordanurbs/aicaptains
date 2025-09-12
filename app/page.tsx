@@ -144,14 +144,14 @@ function AICaptainsContent() {
 
                 {/* Tagline */}
                 <div className="text-center">
-                  <p className="text-cyan-400 retro-text text-lg">COMMAND YOUR FUTURE.</p>
-                  <p className="text-cyan-400 retro-text text-lg">NAVIGATE WITH POWER.</p>
+                  <p className="text-cyan-400 retro-text text-3xl sm:text-4xl md:text-3xl lg:text-4xl retro-leading-tight">COMMAND YOUR FUTURE.</p>
+                  <p className="text-cyan-400 retro-text text-3xl sm:text-4xl md:text-3xl lg:text-4xl retro-leading-tight">NAVIGATE WITH POWER!</p>
                 </div>
 
                 {/* Bio */}
                 <div className="space-y-6 border-t-2 border-b-2 border-yellow-500 py-4">
                   <p className="text-gray-300 leading-relaxed text-sm">
-                    We empower digital builders & entrepreneurs to create professional software through conversation with AI, transforming ideas into reality without traditional coding & technical barriers.</p>
+                    AI CAPTAINS empowers online builders to build & ship their first business with AI.<br></br><br></br>We transform platform-dependent, no code passengers into AI Captains.</p>
                 </div>
 
                 {/* Game Button */}
@@ -244,7 +244,7 @@ function AICaptainsContent() {
                   />
                   <div className="mt-4 text-center">
                     <Button
-                      className="retro-button bg-red-600 text-yellow-400 hover:bg-yellow-400 hover:text-red-600 font-bold px-8 py-2 text-lg"
+                      className="retro-button bg-red-600 text-yellow-400 hover:bg-yellow-400 hover:text-red-600 font-bold px-12 py-6 button-text"
                       onClick={handleButtonClick}
                       onMouseEnter={handleHover}
                       asChild
@@ -260,7 +260,7 @@ function AICaptainsContent() {
               {/* Projects Section */}
               <section id="power-up-section" className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-900">
                 <div className="bg-yellow-500 text-black p-2 flex justify-between items-center">
-                  <h2 className="text-xl font-bold retro-text">SELECT YOUR POWER-UP</h2>
+                  <h2 className="text-3xl md:text-6xl font-bold retro-text">SELECT YOUR POWER-UP</h2>
                   <ChevronRight className="w-6 h-6" />
                 </div>
                 <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -399,7 +399,7 @@ function AICaptainsContent() {
               {/* Contact Section - Full Width 
               <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gradient-to-br from-purple-900 to-blue-900">
                 <div className="bg-yellow-500 text-black p-2">
-                  <h2 className="text-xl font-bold retro-text">CONTACT</h2>
+                  <h2 className="text-5xl md:text-6xl font-bold retro-text">CONTACT</h2>
                 </div>
                 <div className="p-4 relative">
                   <div className="absolute inset-0 grid-bg opacity-30"></div>

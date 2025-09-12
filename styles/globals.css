@@ -2,9 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@font-face {
+  font-family: "CourierPrimeCode";
+  src: url("/fonts/CourierPrimeCode/Courier Prime Code.ttf") format("truetype");
+  font-display: swap;
 }
+
+@font-face {
+  font-family: "CourierPrimeCode";
+  src: url("/fonts/CourierPrimeCode/Courier Prime Code Italic.ttf") format("truetype");
+  font-style: italic;
+  font-display: swap;
+}
+
 
 @layer utilities {
   .text-balance {
@@ -90,5 +100,6 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "CourierPrimeCode", monospace;
   }
 }

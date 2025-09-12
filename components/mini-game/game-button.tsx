@@ -24,7 +24,7 @@ export function GameButton() {
     <>
       <Button
         variant="outline"
-        className="retro-button bg-red-600 text-yellow-400 hover:bg-yellow-400 hover:text-red-600 font-bold"
+        className="retro-button bg-red-600 text-yellow-400 hover:bg-yellow-400 hover:text-red-600 font-bold sidebar-button-text px-4 py-2"
         onClick={handleOpenGame}
         onMouseEnter={() => playSound("hover")}
       >

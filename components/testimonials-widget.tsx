@@ -23,7 +23,7 @@ export function TestimonialsWidget() {
   return (
     <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-900">
       <div className="bg-yellow-500 text-black p-2 flex justify-between items-center">
-        <h2 className="text-xl font-bold retro-text">PLAYER REVIEWS</h2>
+        <h2 className="text-5xl md:text-6xl font-bold retro-text">PLAYER REVIEWS</h2>
         <ChevronRight className="w-6 h-6" />
       </div>
       <div className="p-6">

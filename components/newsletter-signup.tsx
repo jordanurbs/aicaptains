@@ -31,7 +31,7 @@ export function NewsletterSignup() {
   return (
     <div className="newsletter-container border-2 border-yellow-500 bg-gray-900 p-3 rounded-lg">
       <div className="bg-yellow-500 text-black p-2 -mt-5 mb-3 rounded-md transform rotate-1 shadow-lg">
-        <h3 className="text-sm font-bold retro-text text-center">JOIN THE VIBE BUILDERS</h3>
+        <h3 className="text-3xl md:text-4xl font-bold retro-text text-center">JOIN THE VIBE BUILDERS</h3>
       </div>
 
       {!isSubmitted ? (
@@ -44,14 +44,15 @@ export function NewsletterSignup() {
               onFocus={handleInputFocus}
               placeholder="YOUR EMAIL"
               required
-              className="w-full bg-black border-2 border-cyan-400 text-cyan-400 p-2 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder:text-cyan-700"
+              className="w-full bg-black border-2 border-cyan-400 text-cyan-400 p-4 uppercase rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder:text-cyan-700 font-bold"
+              style={{ fontFamily: '"SHPinscher", monospace', fontSize: '1.5rem' }}
             />
             <div className="absolute inset-0 pointer-events-none scanline-thin"></div>
           </div>
 
           <Button
             type="submit"
-            className="w-full retro-button bg-cyan-600 text-yellow-400 hover:bg-yellow-400 hover:text-cyan-600 font-bold"
+            className="w-full retro-button bg-cyan-600 text-yellow-400 hover:bg-yellow-400 hover:text-cyan-600 font-bold sidebar-button-text px-4 py-2"
           >
             SUBSCRIBE <Send className="ml-2 h-4 w-4" />
           </Button>
