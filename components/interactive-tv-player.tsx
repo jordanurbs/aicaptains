@@ -1,9 +1,133 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { Play, Pause, Power } from "lucide-react"
+import { Play, Pause, Power, VolumeX, Volume2 } from "lucide-react"
 import { useSound } from "@/components/sound-provider"
 import Image from "next/image"
+
+// Responsive positioning hook for TV controls
+const useResponsiveControlPositions = () => {
+  const [screenWidth, setScreenWidth] = useState(1240) // Default to perfect width
+  
+  useEffect(() => {
+    const updateScreenWidth = () => setScreenWidth(window.innerWidth)
+    updateScreenWidth()
+    window.addEventListener('resize', updateScreenWidth)
+    return () => window.removeEventListener('resize', updateScreenWidth)
+  }, [])
+  
+  // Calculate responsive positions based on screen width
+  // 1240px is the perfect reference point
+  const getResponsivePosition = (baseRightPercent: number) => {
+    if (screenWidth >= 1400) {
+      // Very large screens: move controls further left
+      return `${baseRightPercent + 3}%`
+    } else if (screenWidth >= 1240) {
+      // Perfect range (1240px-1400px): keep stationary at perfect position
+      return `${baseRightPercent}%`
+    } else if (screenWidth >= 1024) {
+      // Medium screens: slight adjustment
+      return `${baseRightPercent - 1}%`
+    } else if (screenWidth >= 768) {
+      // Small screens: more adjustment
+      return `${baseRightPercent - 2}%`
+    } else {
+      // Mobile: significant adjustment
+      return `${baseRightPercent - 3}%`
+    }
+  }
+  
+  // Special positioning for power button above 1240px
+  const getPowerButtonPosition = () => {
+    if (screenWidth >= 1422) {
+      // Perfect at 1422px and above
+      return { 
+        top: '44.5%', 
+        right: '10.5%' 
+      }
+    } else if (screenWidth > 1240) {
+      // Between 1240px-1422px: interpolate to reach perfect position at 1422px
+      const progress = (screenWidth - 1240) / (1422 - 1240) // 0 to 1
+      const startRight = 5 // 5% at 1240px
+      const endRight = 10.5 // 10.5% at 1422px
+      const interpolatedRight = startRight + (endRight - startRight) * progress
+      return { 
+        top: '44.5%', 
+        right: `${interpolatedRight}%` 
+      }
+    } else {
+      return { 
+        top: '44%', 
+        right: getResponsivePosition(5) 
+      }
+    }
+  }
+  
+  // Enhanced knob positioning with scaling/hiding and smooth interpolation
+  const getKnobPositionAndVisibility = () => {
+    let visibility = true
+    let scale = 1
+    let rightPosition = '17%'
+
+    if (screenWidth < 1080) {
+      // Hide knobs completely under 1080px (they're just for fun anyway)
+      visibility = false
+    } else if (screenWidth >= 1400) {
+      // Very large screens: move controls further left
+      rightPosition = '20%' // 17% + 3%
+      scale = 1
+    } else if (screenWidth >= 1240) {
+      // INTERPOLATING range (1240px-1400px): Smooth transition like power button
+      const progress = (screenWidth - 1240) / (1400 - 1240) // 0 to 1
+      const startRight = 17 // 17% at 1240px (perfect position)
+      const endRight = 20   // 20% at 1400px  
+      const interpolatedRight = startRight + (endRight - startRight) * progress
+      rightPosition = `${interpolatedRight}%`
+      
+      // Progressive scaling down as screen gets smaller from 1400px to 1240px
+      scale = 0.7 + (0.3 * progress) // Scale from 0.7 to 1.0
+    } else {
+      // Use normal responsive logic for smaller screens
+      rightPosition = getResponsivePosition(17)
+      scale = 1
+    }
+
+    return { right: rightPosition, visible: visibility, scale }
+  }
+
+  const knobSettings = getKnobPositionAndVisibility()
+
+  return {
+    powerButton: getPowerButtonPosition(),
+    volumeKnob: { 
+      right: knobSettings.right, 
+      visible: knobSettings.visible, 
+      scale: knobSettings.scale 
+    },
+    channelKnob: { 
+      right: knobSettings.right, 
+      visible: knobSettings.visible, 
+      scale: knobSettings.scale 
+    },
+    muteButton: { 
+      right: (() => {
+        if (screenWidth >= 1400) {
+          // At 1400px and above, use a fixed position
+          return '21%' // 18% + 3%
+        } else if (screenWidth >= 1240) {
+          // Interpolate between 1240px-1400px like the knobs
+          const progress = (screenWidth - 1240) / (1400 - 1240) // 0 to 1
+          const startRight = 18 // 18% at 1240px (perfect position)
+          const endRight = 21   // 21% at 1400px
+          return `${startRight + (endRight - startRight) * progress}%`
+        } else {
+          // Use normal responsive logic for smaller screens
+          return getResponsivePosition(18)
+        }
+      })()
+    }
+  }
+}
 
 interface InteractiveTVPlayerProps {
   videoSrc: string
@@ -24,8 +148,12 @@ export function InteractiveTVPlayer({
   const [tvState, setTvState] = useState<TVState>('off')
   const [volume, setVolume] = useState(0.7)
   const [isMuted, setIsMuted] = useState(autoPlay)
+  const [isExplicitlyMuted, setIsExplicitlyMuted] = useState(false)
   const [currentChannel, setCurrentChannel] = useState(0)
   const [showPlayButton, setShowPlayButton] = useState(true)
+  
+  // Get responsive control positions
+  const controlPositions = useResponsiveControlPositions()
   
   // Debug showPlayButton changes
   useEffect(() => {
@@ -38,7 +166,6 @@ export function InteractiveTVPlayer({
   const [easterEggActive, setEasterEggActive] = useState(false)
   const [leftControllerHover, setLeftControllerHover] = useState(false)
   const [rightControllerHover, setRightControllerHover] = useState(false)
-  const [showControllerHint, setShowControllerHint] = useState(false)
   // const [currentVideoSrc, setCurrentVideoSrc] = useState(videoSrc)
   // const [hasTriedWebM, setHasTriedWebM] = useState(false)
   
@@ -219,13 +346,13 @@ export function InteractiveTVPlayer({
     }
   }, []) // Empty dependency - only runs on mount/unmount
 
-  // Sync video muted state with sound provider
+  // Sync video muted state with sound provider (but respect explicit mute)
   useEffect(() => {
-    if (videoRef.current && soundProviderMuted !== isMuted) {
+    if (videoRef.current && soundProviderMuted !== isMuted && !isExplicitlyMuted) {
       setIsMuted(soundProviderMuted)
       videoRef.current.muted = soundProviderMuted
     }
-  }, [soundProviderMuted, isMuted])
+  }, [soundProviderMuted, isMuted, isExplicitlyMuted])
 
   // TV state change callback
   useEffect(() => {
@@ -305,8 +432,8 @@ export function InteractiveTVPlayer({
       if (videoRef.current) {
         videoRef.current.volume = newVolume
         
-        // If volume is being adjusted and user interaction occurred, allow unmuting
-        if (newVolume > 0 && isMuted) {
+        // If volume is being adjusted and user interaction occurred, allow unmuting (unless explicitly muted)
+        if (newVolume > 0 && isMuted && !isExplicitlyMuted) {
           setIsMuted(false)
           videoRef.current.muted = false
         }
@@ -360,51 +487,19 @@ export function InteractiveTVPlayer({
   }
 
 
-  // Play button click handler
-  const handlePlayButtonClick = () => {
-    console.log('🎯 Play button clicked! Current state:', tvState)
-    console.log('📹 Video ref exists:', !!videoRef.current)
-    
-    if (tvState === 'off') {
-      console.log('🔌 TV is off, powering on...')
-      handlePowerButton()
-      return
-    }
-    
+  // Mute button handler - toggles video audio specifically
+  const handleMuteButton = () => {
     playSound('click')
     if (videoRef.current) {
-      console.log('🎬 Attempting manual play...')
-      // User interaction allows us to unmute
-      videoRef.current.muted = false
-      setIsMuted(false)
-      
-      const playPromise = videoRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            console.log('✅ Manual play successful')
-            console.log('🟢 TV State: ' + tvState + ' → PLAYING')
-            setTvState('playing')
-            setShowPlayButton(false)
-          })
-          .catch((error) => {
-            console.error('❌ Manual play failed:', error)
-            console.log('🔇 Retrying with muted video...')
-            // Keep trying but stay muted if needed
-            if (videoRef.current) {
-              videoRef.current.muted = true
-              videoRef.current.play().then(() => {
-                console.log('✅ Muted play successful')
-                setTvState('playing')
-                setShowPlayButton(false)
-              }).catch((e) => {
-                console.error('❌ Even muted play failed:', e)
-              })
-            }
-          })
-      }
+      const newMutedState = !videoRef.current.muted
+      videoRef.current.muted = newMutedState
+      setIsMuted(newMutedState)
+      setIsExplicitlyMuted(newMutedState) // Track that user explicitly muted/unmuted
+      console.log('Video audio toggled:', newMutedState ? 'MUTED' : 'UNMUTED')
+      console.log('Explicitly muted:', newMutedState)
     }
   }
+
 
   // Controller interaction handlers
   const handleLeftControllerClick = () => {
@@ -417,11 +512,14 @@ export function InteractiveTVPlayer({
       return
     }
     
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        // User interaction allows unmuting
-        videoRef.current.muted = false
-        setIsMuted(false)
+    // Handle initial play state or paused state
+    if (tvState === 'paused' || tvState === 'static' || showPlayButton) {
+      if (videoRef.current) {
+        // User interaction allows unmuting (unless explicitly muted)
+        if (!isExplicitlyMuted) {
+          videoRef.current.muted = false
+          setIsMuted(false)
+        }
         
         const playPromise = videoRef.current.play()
         if (playPromise !== undefined) {
@@ -429,26 +527,31 @@ export function InteractiveTVPlayer({
             .then(() => {
               setTvState('playing')
               setShowPlayButton(false)
+              console.log('✅ Controller play successful')
             })
             .catch((error) => {
               console.error('Controller play failed:', error)
               // Fallback to muted play
               if (videoRef.current) {
                 videoRef.current.muted = true
+                setIsMuted(true)
                 videoRef.current.play().then(() => {
                   setTvState('playing')
                   setShowPlayButton(false)
+                  console.log('✅ Controller muted play successful')
                 }).catch(() => {
+                  console.error('❌ Controller play completely failed')
                   setTvState('paused')
                 })
               }
             })
         }
-      } else {
-        videoRef.current.pause()
-        setTvState('paused')
-        setShowPlayButton(true)
       }
+    } else if (tvState === 'playing' && videoRef.current && !videoRef.current.paused) {
+      // Pause if currently playing
+      videoRef.current.pause()
+      setTvState('paused')
+      setShowPlayButton(true)
     }
   }
 
@@ -458,16 +561,6 @@ export function InteractiveTVPlayer({
     onSkipToMain?.()
   }
 
-  // Show controller hint after a delay
-  useEffect(() => {
-    const hintTimer = setTimeout(() => {
-      setShowControllerHint(true)
-      // Hide hint after 5 seconds
-      setTimeout(() => setShowControllerHint(false), 5000)
-    }, 3000)
-    
-    return () => clearTimeout(hintTimer)
-  }, [])
 
   const getChannelFilter = (): string => {
     switch (channels[currentChannel]) {
@@ -614,25 +707,14 @@ export function InteractiveTVPlayer({
           {/* Phosphor Glow Effect */}
           <div className="absolute inset-0 crt-phosphor-glow pointer-events-none" />
 
-          {/* Play Button Overlay - Enhanced */}
+          {/* Play Button Overlay - Now invisible but shows text */}
           {showPlayButton && (
-            <button
-              onClick={handlePlayButtonClick}
-              className="absolute inset-0 flex items-center justify-center bg-black/60 hover:bg-black/40 transition-all duration-300 group backdrop-blur-sm"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-orange-500 rounded-full animate-ping opacity-20" />
-                <div className="relative bg-gradient-to-r from-orange-500 to-orange-400 rounded-full p-6 shadow-2xl transform group-hover:scale-110 group-hover:shadow-orange-500/50 transition-all duration-200">
-                  <Play className="h-8 w-8 text-white ml-1 drop-shadow-lg" />
-                </div>
-                <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent to-white/20 pointer-events-none" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Retro text instruction */}
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-orange-400 text-sm font-mono animate-pulse text-center">
+                {tvState === 'off' ? 'POWER ON' : 'USE THE CONTROLLERS TO PRESS PLAY'}
               </div>
-              
-              {/* Retro text below button */}
-              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-orange-400 text-sm font-mono animate-pulse">
-                {tvState === 'off' ? 'POWER ON' : 'PRESS PLAY'}
-              </div>
-            </button>
+            </div>
           )}
 
           {/* TV Progress Bar - Shows current time when playing */}
@@ -666,7 +748,12 @@ export function InteractiveTVPlayer({
         {/* Power Button - positioned on the right panel */}
         <button
           className="absolute pointer-events-auto z-50 hover:bg-red-500/40 cursor-pointer"
-          style={{ top: '22%', right: '15%', width: '40px', height: '40px' }}
+          style={{ 
+            top: controlPositions.powerButton.top, 
+            right: controlPositions.powerButton.right, 
+            width: '45px', 
+            height: '45px' 
+          }}
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -685,15 +772,24 @@ export function InteractiveTVPlayer({
         </button>
 
         {/* Volume Knob - top knob on right panel */}
+        {controlPositions.volumeKnob.visible && (
         <div
-          className="absolute pointer-events-auto cursor-grab active:cursor-grabbing z-50 hover:bg-gray-500/40"
-          style={{ top: '35%', right: '16%', width: '50px', height: '50px' }}
+          className="absolute pointer-events-auto cursor-grab active:cursor-grabbing z-50 hover:bg-gray-500/40 rounded-full transition-all duration-300"
+          style={{ 
+            top: '37%', 
+            right: controlPositions.volumeKnob.right, 
+            width: '65px', 
+            height: '65px',
+            transform: `scale(${controlPositions.volumeKnob.scale})`
+          }}
           title="Volume Knob"
           onClick={handleVolumeKnob}
           onMouseDown={(e) => {
             e.preventDefault()
             const handleMouseMove = (moveEvent: MouseEvent) => {
-              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+              const target = e.currentTarget as HTMLElement
+              if (!target) return
+              const rect = target.getBoundingClientRect()
               const centerX = rect.left + rect.width / 2
               const centerY = rect.top + rect.height / 2
               const angle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX)
@@ -706,7 +802,7 @@ export function InteractiveTVPlayer({
               
               if (videoRef.current) {
                 videoRef.current.volume = newVolume
-                if (newVolume > 0 && isMuted) {
+                if (newVolume > 0 && isMuted && !isExplicitlyMuted) {
                   setIsMuted(false)
                   videoRef.current.muted = false
                 }
@@ -731,17 +827,27 @@ export function InteractiveTVPlayer({
             <div className="absolute top-1 left-1/2 w-1 h-2 bg-orange-400 transform -translate-x-1/2" />
           </div>
         </div>
+        )}
 
         {/* Channel Knob - bottom knob on right panel */}
+        {controlPositions.channelKnob.visible && (
         <div
-          className="absolute pointer-events-auto cursor-grab active:cursor-grabbing z-50 hover:bg-gray-500/40"
-          style={{ top: '60%', right: '16%', width: '50px', height: '50px' }}
+          className="absolute pointer-events-auto cursor-grab active:cursor-grabbing z-50 hover:bg-gray-500/40 rounded-full transition-all duration-300"
+          style={{ 
+            top: '48%', 
+            right: controlPositions.channelKnob.right, 
+            width: '65px', 
+            height: '65px',
+            transform: `scale(${controlPositions.channelKnob.scale})`
+          }}
           title="Channel Knob"
           onClick={handleChannelKnob}
           onMouseDown={(e) => {
             e.preventDefault()
             const handleMouseMove = (moveEvent: MouseEvent) => {
-              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+              const target = e.currentTarget as HTMLElement
+              if (!target) return
+              const rect = target.getBoundingClientRect()
               const centerX = rect.left + rect.width / 2
               const centerY = rect.top + rect.height / 2
               const angle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX)
@@ -789,6 +895,37 @@ export function InteractiveTVPlayer({
             <div className="absolute top-1 left-1/2 w-1 h-2 bg-teal-400 transform -translate-x-1/2" />
           </div>
         </div>
+        )}
+
+        {/* Mute Button - circular button below the knobs */}
+        <button
+          className="absolute pointer-events-auto z-50 hover:bg-gray-500/40 cursor-pointer"
+          style={{ 
+            top: '64%', 
+            right: controlPositions.muteButton.right, 
+            width: '40px', 
+            height: '40px' 
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Mute button clicked!');
+            handleMuteButton();
+          }}
+          title={isMuted ? "Unmute Audio" : "Mute Audio"}
+        >
+          <div className={`w-full h-full rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
+            isMuted 
+              ? 'bg-red-600 border-red-400 shadow-lg shadow-red-500/50' 
+              : 'bg-green-600 border-green-400 shadow-lg shadow-green-500/50'
+          }`}>
+            {isMuted ? (
+              <VolumeX className="h-4 w-4 text-white" />
+            ) : (
+              <Volume2 className="h-4 w-4 text-white" />
+            )}
+          </div>
+        </button>
 
         {/* Interactive Controllers on TV Image */}
         {/* Left Controller - Play/Pause */}
@@ -801,30 +938,26 @@ export function InteractiveTVPlayer({
           }}
           onMouseEnter={() => setLeftControllerHover(true)}
           onMouseLeave={() => setLeftControllerHover(false)}
-          className="absolute pointer-events-auto group z-50 hover:bg-yellow-500/40 cursor-pointer"
+          className="absolute pointer-events-auto group z-50 cursor-pointer"
           style={{ 
-            bottom: '22%', 
-            left: '12%', 
-            width: '60px', 
-            height: '40px'
+            bottom: '7%', 
+            left: '41.5%', 
+            width: '80px', 
+            height: '60px'
           }}
           title="Left Controller - Play/Pause"
         >
-          {/* Glow effect on hover */}
-          <div className={`absolute inset-0 rounded-full transition-all duration-300 ${
-            leftControllerHover ? 'bg-teal-400/30 shadow-lg shadow-teal-400/50 scale-110' : 'bg-transparent'
-          }`} />
-          {/* Play/Pause icon overlay */}
-          {leftControllerHover && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-black/80 rounded-full p-2">
-                {tvState === 'playing' ? 
-                  <Pause className="h-4 w-4 text-teal-400" /> : 
-                  <Play className="h-4 w-4 text-teal-400 ml-0.5" />
-                }
-              </div>
-            </div>
-          )}
+          {/* Always visible background and icon */}
+          <div className={`absolute inset-0 rounded-full transition-all duration-300 flex items-center justify-center ${
+            leftControllerHover 
+              ? 'bg-teal-500/90 shadow-lg shadow-teal-400/50 scale-110' 
+              : 'bg-teal-600/85 shadow-md shadow-teal-500/30'
+          }`}>
+            {tvState === 'playing' ? 
+              <Pause className="h-5 w-5 text-white drop-shadow-lg" /> : 
+              <Play className="h-5 w-5 text-white ml-0.5 drop-shadow-lg" />
+            }
+          </div>
         </button>
 
         {/* Right Controller - Skip to Main */}
@@ -837,47 +970,26 @@ export function InteractiveTVPlayer({
           }}
           onMouseEnter={() => setRightControllerHover(true)}
           onMouseLeave={() => setRightControllerHover(false)}
-          className="absolute pointer-events-auto group z-50 hover:bg-purple-500/40 cursor-pointer"
+          className="absolute pointer-events-auto group z-50 cursor-pointer"
           style={{ 
-            bottom: '22%', 
-            right: '12%', 
-            width: '60px', 
-            height: '40px'
+            bottom: '7.5%', 
+            right: '31%', 
+            width: '80px', 
+            height: '60px'
           }}
           title="Right Controller - Skip to Main"
         >
-          {/* Glow effect on hover */}
-          <div className={`absolute inset-0 rounded-full transition-all duration-300 ${
-            rightControllerHover ? 'bg-orange-400/30 shadow-lg shadow-orange-400/50 scale-110' : 'bg-transparent'
-          }`} />
-          {/* Skip text - always visible */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className={`rounded-full p-2 transition-all duration-200 ${
-              rightControllerHover ? 'bg-black/90 scale-110' : 'bg-black/70'
-            }`}>
-              <div className="text-orange-400 text-xs font-mono font-bold">SKIP</div>
-            </div>
+          {/* Always visible background with skip text */}
+          <div className={`absolute inset-0 rounded-full transition-all duration-300 flex items-center justify-center ${
+            rightControllerHover 
+              ? 'bg-orange-500/90 shadow-lg shadow-orange-400/50 scale-110' 
+              : 'bg-orange-600/85 shadow-md shadow-orange-500/30'
+          }`}>
+            <div className="text-white text-sm font-mono font-black drop-shadow-lg">SKIP</div>
           </div>
         </button>
       </div>
 
-      {/* Interactive Hints */}
-      {showControllerHint && (
-        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 bg-black/90 border border-orange-500 rounded-lg px-4 py-2 animate-bounce">
-          <div className="text-orange-400 text-sm font-mono text-center">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-teal-400 rounded-full animate-pulse"></div>
-                <span>LEFT = PLAY/PAUSE</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-orange-400 rounded-full animate-pulse"></div>
-                <span>RIGHT = ENTER SITE</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
 
       {/* Channel Display */}
