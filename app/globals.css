@@ -550,7 +550,7 @@ body {
   height: 100vh;
   max-height: 100vh;
   width: 350px;
-  overflow-y: auto;
+  overflow-y: hidden;
   padding: 1.5rem;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -579,6 +579,10 @@ body {
     height: auto;
     max-height: none;
     align-self: auto;
+    overflow: visible;
+    /* Prevent stretching during scroll */
+    contain: layout style;
+    will-change: auto;
   }
 
   .content-with-sidebar {
