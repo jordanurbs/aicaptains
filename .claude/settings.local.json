@@ -12,7 +12,9 @@
       "Bash(curl:*)",
       "Bash(npx tsc:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(git checkout:*)",
+      "Bash(sed:*)"
     ],
     "deny": [],
     "ask": []

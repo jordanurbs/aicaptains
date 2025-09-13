@@ -25,8 +25,8 @@ export default function EmailConfirmed() {
         {/* AI CAPTAINS Logo Image */}
         <div className="mb-8">
           <Image
-            src="/images/aiclogo.png"
-            alt="AI CAPTAINS"
+            src="/images/academy-logo-min.png"
+            alt="AI CAPTAINS ACADEMY"
             width={500}
             height={250}
             className="object-contain"
@@ -67,7 +67,7 @@ export default function EmailConfirmed() {
               rel="noopener noreferrer"
               className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-semibold underline decoration-cyan-400/50 hover:decoration-cyan-300"
             >
-              AI Captains Skool
+              AI Captains Academy Skool
             </Link>
             {" "}teaches you how.
           </p>

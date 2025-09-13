@@ -256,11 +256,12 @@ body {
 }
 
 .grid-bg {
-  background-image: linear-gradient(rgba(0, 0, 50, 0.8) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 50, 0.8) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(0, 0, 50, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 50, 0.4) 1px, transparent 1px);
   background-size: 30px 30px;
   background-position: center center;
   perspective: 500px;
+  z-index: -1;
 }
 
 .blink {
@@ -1367,8 +1368,8 @@ body {
 
 .phone-frame {
   position: relative;
-  width: 220px;
-  height: 390px;
+  width: 330px;
+  height: 585px;
   background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
   border-radius: 25px;
   padding: 18px;
@@ -1390,8 +1391,8 @@ body {
 
 .phone-screen {
   position: relative;
-  width: 185px;
-  height: 330px;
+  width: 278px;
+  height: 495px;
   background: #000;
   border-radius: 15px;
   overflow: hidden;
@@ -1891,4 +1892,394 @@ body {
   will-change: opacity, transform;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+}
+
+/* ===== RETRO TV TRANSITION EFFECTS ===== */
+
+/* TV Screen Shrink Animation */
+@keyframes tvShrink {
+  0% {
+    transform: scale(1);
+    border-radius: 0;
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0.1);
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+  90% {
+    transform: scale(0.02);
+    border-radius: 50%;
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(0);
+    border-radius: 50%;
+    opacity: 0;
+  }
+}
+
+/* Static Flash Effect */
+@keyframes staticFlash {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  20% { opacity: 0; }
+  30% { opacity: 1; }
+  40% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* Loading Dots Animation */
+@keyframes loadingDots {
+  0%, 20% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 8px;
+  z-index: 10000;
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  background: #00ffff;
+  border-radius: 50%;
+  animation: loadingDots 1.5s infinite;
+}
+
+.loading-dot:nth-child(2) { animation-delay: 0.3s; }
+.loading-dot:nth-child(3) { animation-delay: 0.6s; }
+
+/* ===== INSTANT GLITCH OVERLAY EFFECTS ===== */
+
+/* Instant glitch that appears immediately when transition triggers */
+@keyframes instantGlitch {
+  0% {
+    opacity: 0;
+    filter: hue-rotate(0deg);
+  }
+  5% {
+    opacity: 0.8;
+    filter: hue-rotate(90deg);
+    transform: translate(2px, 1px);
+  }
+  10% {
+    opacity: 0.9;
+    filter: hue-rotate(180deg);
+    transform: translate(-1px, -2px);
+  }
+  15% {
+    opacity: 0.7;
+    filter: hue-rotate(270deg);
+    transform: translate(-3px, 0px);
+  }
+  25% {
+    opacity: 0.95;
+    filter: hue-rotate(0deg);
+    transform: translate(2px, -1px);
+  }
+  35% {
+    opacity: 0.8;
+    filter: hue-rotate(45deg);
+    transform: translate(1px, 2px);
+  }
+  50% {
+    opacity: 0.9;
+    filter: hue-rotate(135deg);
+    transform: translate(-2px, 1px);
+  }
+  65% {
+    opacity: 0.85;
+    filter: hue-rotate(225deg);
+    transform: translate(0px, -2px);
+  }
+  80% {
+    opacity: 0.95;
+    filter: hue-rotate(315deg);
+    transform: translate(3px, 0px);
+  }
+  100% {
+    opacity: 1;
+    filter: hue-rotate(0deg);
+    transform: translate(0px, 0px);
+  }
+}
+
+/* RGB color separation glitch effect */
+@keyframes rgbSeparation {
+  0% {
+    text-shadow: 
+      0px 0px rgba(255, 0, 0, 0),
+      0px 0px rgba(0, 255, 0, 0),
+      0px 0px rgba(0, 0, 255, 0);
+  }
+  20% {
+    text-shadow: 
+      2px 0px rgba(255, 0, 0, 0.8),
+      -2px 0px rgba(0, 255, 0, 0.8),
+      0px 0px rgba(0, 0, 255, 0.8);
+  }
+  40% {
+    text-shadow: 
+      -1px 0px rgba(255, 0, 0, 0.9),
+      3px 0px rgba(0, 255, 0, 0.9),
+      1px 0px rgba(0, 0, 255, 0.9);
+  }
+  60% {
+    text-shadow: 
+      3px 0px rgba(255, 0, 0, 0.7),
+      0px 0px rgba(0, 255, 0, 0.7),
+      -2px 0px rgba(0, 0, 255, 0.7);
+  }
+  80% {
+    text-shadow: 
+      0px 0px rgba(255, 0, 0, 0.6),
+      -3px 0px rgba(0, 255, 0, 0.6),
+      2px 0px rgba(0, 0, 255, 0.6);
+  }
+  100% {
+    text-shadow: 
+      0px 0px rgba(255, 0, 0, 0),
+      0px 0px rgba(0, 255, 0, 0),
+      0px 0px rgba(0, 0, 255, 0);
+  }
+}
+
+/* White noise flicker */
+@keyframes whiteNoiseFlicker {
+  0%, 100% { opacity: 0.1; }
+  10% { opacity: 0.9; }
+  20% { opacity: 0.3; }
+  30% { opacity: 0.8; }
+  40% { opacity: 0.2; }
+  50% { opacity: 0.95; }
+  60% { opacity: 0.4; }
+  70% { opacity: 0.7; }
+  80% { opacity: 0.15; }
+  90% { opacity: 0.85; }
+}
+
+/* ===== CRT TV TUNE-IN EFFECTS ===== */
+
+/* Channel tune-in effect - homepage materializes like finding the right TV channel */
+@keyframes channelTuneIn {
+  0% { 
+    opacity: 0;
+    filter: blur(15px) contrast(0.3) brightness(0.7);
+    transform: scale(1.03);
+  }
+  20% {
+    opacity: 0.2;
+    filter: blur(12px) contrast(0.5) brightness(0.8);
+    transform: scale(1.025);
+  }
+  40% {
+    opacity: 0.4;
+    filter: blur(8px) contrast(0.7) brightness(0.9);
+    transform: scale(1.02);
+  }
+  70% {
+    opacity: 0.8;
+    filter: blur(3px) contrast(1.1) brightness(1.1);
+    transform: scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0px) contrast(1) brightness(1);
+    transform: scale(1);
+  }
+}
+
+/* Scan line sweep during tune-in */
+@keyframes scanLineSweep {
+  0% { 
+    transform: translateY(-100vh);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(100vh);
+    opacity: 0.3;
+  }
+}
+
+/* Signal lock effect - final sharpening */
+@keyframes signalLock {
+  0% {
+    filter: blur(2px) contrast(1.1);
+  }
+  50% {
+    filter: blur(1px) contrast(1.2);
+  }
+  100% {
+    filter: blur(0px) contrast(1);
+  }
+}
+
+/* Grid Expansion Animation */
+@keyframes gridExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(0.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Homepage Fade In */
+@keyframes homepageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Transition Container Classes */
+.transition-intro-shrink {
+  animation: tvShrink 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.transition-static-flash {
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 50% 50%, white 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23666' fill-opacity='0.4'%3E%3Ccircle cx='5' cy='5' r='1'/%3E%3Ccircle cx='15' cy='15' r='1'/%3E%3Ccircle cx='25' cy='25' r='1'/%3E%3Ccircle cx='35' cy='35' r='1'/%3E%3Ccircle cx='45' cy='45' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  animation: staticFlash 0.4s ease-in-out;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.transition-grid-expand {
+  position: fixed;
+  inset: 0;
+  background: 
+    linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px),
+    linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridExpand 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 50;
+  pointer-events: none;
+}
+
+.transition-homepage-enter {
+  animation: homepageFadeIn 0.6s ease-out;
+}
+
+/* Transition States */
+.transition-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.transition-intro-exit {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+}
+
+.transition-homepage-delayed {
+  opacity: 0;
+  animation: homepageFadeIn 0.6s ease-out 1.2s forwards;
+}
+
+/* CRT Tune-In Transition Classes */
+.transition-channel-tuning {
+  animation: channelTuneIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.transition-signal-lock {
+  animation: signalLock 0.5s ease-out;
+}
+
+.transition-scan-lines {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 255, 255, 0.1) 49%,
+    rgba(0, 255, 255, 0.3) 50%,
+    rgba(0, 255, 255, 0.1) 51%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  animation: scanLineSweep 0.8s linear;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+/* Instant Glitch Overlay - appears immediately when transition triggers */
+.transition-instant-glitch {
+  position: fixed;
+  inset: 0;
+  z-index: 10001; /* Above intro sequence */
+  background: 
+    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E"),
+    radial-gradient(circle at 30% 70%, rgba(255, 0, 0, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(0, 255, 0, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 255, 0.3) 0%, transparent 50%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%);
+  animation: instantGlitch 0.8s ease-out;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.transition-instant-glitch::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.1) 2px,
+      rgba(255, 255, 255, 0.1) 4px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 255, 255, 0.2) 1px,
+      rgba(0, 255, 255, 0.2) 2px
+    );
+  animation: whiteNoiseFlicker 0.1s infinite;
+}
+
+.transition-instant-glitch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 255, 0.3) 0%,
+    transparent 25%,
+    rgba(0, 255, 255, 0.3) 50%,
+    transparent 75%,
+    rgba(255, 255, 0, 0.3) 100%
+  );
+  animation: rgbSeparation 0.2s infinite alternate;
 }

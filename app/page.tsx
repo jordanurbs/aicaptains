@@ -22,6 +22,9 @@ function AICaptainsContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState(0)
   const [showIntro, setShowIntro] = useState(true)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const [transitionStage, setTransitionStage] = useState<'idle' | 'instant-glitch' | 'shrinking' | 'static' | 'expanding' | 'tuning' | 'signal-lock' | 'complete'>('idle')
+  const [imagesLoaded, setImagesLoaded] = useState(false)
   const { playSound, isLoaded } = useSound()
 
   // Check if we should show the intro (only once per session)
@@ -32,15 +35,90 @@ function AICaptainsContent() {
     }
   }, [])
 
-  // Handle intro completion
+  // Preload all critical images immediately
+  useEffect(() => {
+    const preloadImages = [
+      '/images/academy-logo-min.png',
+      '/images/magazine.png',
+      '/images/tnt-boxart.png',
+      '/images/implementation-call.png',
+      '/images/academy-boxart.png',
+      '/images/ccc-boxart.png'
+    ]
+
+    const imagePromises = preloadImages.map(src => {
+      return new Promise<void>((resolve, reject) => {
+        const img = document.createElement('img')
+        img.onload = () => resolve()
+        img.onerror = () => reject()
+        img.src = src
+      })
+    })
+
+    Promise.all(imagePromises)
+      .then(() => {
+        console.log('✅ All images preloaded successfully')
+        setImagesLoaded(true)
+      })
+      .catch(error => {
+        console.warn('⚠️ Some images failed to preload:', error)
+        // Still set as loaded to prevent blocking
+        setImagesLoaded(true)
+      })
+  }, [])
+
+  // Handle intro completion with instant glitch and CRT tune-in transition
   const handleIntroComplete = () => {
-    setShowIntro(false)
+    console.log("🎬 INTRO COMPLETE - Starting transition...")
+    // ⚡ INSTANT RESPONSE - trigger glitch overlay immediately
+    setIsTransitioning(true)
+    setTransitionStage('instant-glitch')
+    console.log("⚡ INSTANT GLITCH TRIGGERED")
     sessionStorage.setItem("hasSeenIntro", "true")
 
-    // Play startup sound after intro completes
+    // Play startup sound immediately
     if (isLoaded) {
       playSound("startup")
     }
+
+    // Quick transition to shrinking after glitch starts
+    setTimeout(() => {
+      setTransitionStage('shrinking')
+    }, 800) // Longer delay to make glitch more visible
+
+    // Enhanced CRT transition sequence
+    setTimeout(() => {
+      setTransitionStage('static')
+      if (isLoaded) playSound('hover') // Static sound effect
+    }, 800) // After intro shrink animation
+
+    setTimeout(() => {
+      setTransitionStage('expanding')
+    }, 1200) // After static flash
+
+    setTimeout(() => {
+      setTransitionStage('tuning')
+      setShowIntro(false) // Homepage starts rendering during tune-in
+      if (isLoaded) playSound('hover') // Continue static during tuning
+    }, 1900) // After grid expansion
+
+    setTimeout(() => {
+      setTransitionStage('signal-lock')
+      if (isLoaded) playSound('select') // Signal found sound
+    }, 2700) // After channel tune-in
+
+    setTimeout(() => {
+      setTransitionStage('complete')
+      // Start background music when signal locks in
+      if (isLoaded) {
+        playSound("background")
+      }
+    }, 3200) // After signal lock
+
+    setTimeout(() => {
+      setIsTransitioning(false)
+      setTransitionStage('idle')
+    }, 3700) // Final cleanup
   }
 
   // Nintendo-style menu navigation with keyboard
@@ -75,6 +153,8 @@ function AICaptainsContent() {
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [playSound, showIntro])
 
+  // No more complex preloading detection needed!
+
   // Handle button click sound
   const handleButtonClick = () => {
     playSound("click")
@@ -106,20 +186,50 @@ function AICaptainsContent() {
   }
 
   return (
-    <div className="bg-black text-white relative crt-effect">
+    <div className="bg-black text-white relative crt-effect transition-container">
       {/* Scroll Indicators - HIDDEN: Remote control not needed */}
       {/* {!showIntro && <ScrollIndicators />} */}
 
-      {/* Show intro sequence if needed */}
-      {showIntro && <IntroSequence onComplete={handleIntroComplete} />}
+      {/* Show intro sequence with transition effects */}
+      {showIntro && (
+        <div className={`${
+          transitionStage === 'shrinking' ? 'transition-intro-shrink transition-intro-exit' : ''
+        }`}>
+          <IntroSequence onComplete={handleIntroComplete} />
+        </div>
+      )}
 
+      {/* Instant Glitch Overlay - appears immediately */}
+      {transitionStage === 'instant-glitch' && (
+        <div className="fixed inset-0 z-[10001] bg-white pointer-events-none animate-pulse" />
+      )}
 
-      {/* Grid background - only show when intro is NOT active */}
-      {!showIntro && <div className="grid-bg fixed inset-0 z-0"></div>}
+      {/* Transition effects overlay */}
+      {isTransitioning && (
+        <div>
+          {transitionStage === 'static' && (
+            <div className="transition-static-flash" />
+          )}
+          {transitionStage === 'expanding' && (
+            <div className="transition-grid-expand" />
+          )}
+          {transitionStage === 'tuning' && (
+            <div className="transition-scan-lines" />
+          )}
+        </div>
+      )}
 
-      {/* Main Content */}
+      {/* Homepage content with CRT tune-in effect */}
       {!showIntro && (
-        <div className="relative z-10">
+        <div 
+          className={`relative z-10 ${
+            transitionStage === 'tuning' ? 'transition-channel-tuning' : 
+            transitionStage === 'signal-lock' ? 'transition-signal-lock' :
+            transitionStage === 'complete' ? 'transition-homepage-enter' : ''
+          }`}
+        >
+          {/* Grid background */}
+          <div className="grid-bg fixed inset-0 z-0"></div>
           <div className="min-h-screen flex flex-col lg:flex-row">
             {/* Left Sidebar - Sticky on desktop */}
             <div className="sticky-sidebar bg-gray-900 p-6 border-4 border-yellow-500 rounded-lg lg:rounded-none lg:border-r-4 lg:border-l-0 lg:border-t-0 lg:border-b-0">
@@ -127,11 +237,12 @@ function AICaptainsContent() {
                 {/* Logo */}
                 <div className="flex justify-center">
                   <Image
-                    src="/images/aiclogo.png"
-                    alt="AI CAPTAINS"
+                    src="/images/academy-logo-min.png"
+                    alt="AI CAPTAINS ACADEMY"
                     width={300}
                     height={150}
                     className="object-contain"
+                    priority
                   />
                 </div>
 
@@ -149,7 +260,7 @@ function AICaptainsContent() {
                 {/* Bio */}
                 <div className="space-y-6 border-t-2 border-b-2 border-yellow-500 py-4">
                   <p className="text-gray-300 leading-relaxed text-sm">
-                    AI CAPTAINS empowers online builders to build & ship their first business with AI.<br></br><br></br>We transform platform-dependent, no code passengers into AI Captains.</p>
+                    AI CAPTAINS ACADEMY empowers online builders to build their first business with AI.<br></br><br></br>We transform platform-dependent, no code passengers into AI Captains.</p>
                 </div>
 
                 {/* Game Button */}
@@ -231,14 +342,15 @@ function AICaptainsContent() {
 
               {/* Hero Section */}
               <section className="relative overflow-hidden rounded-lg border-4 border-yellow-500 p-6 bg-gradient-to-b from-blue-900 to-purple-900">
-                <div className="absolute inset-0 grid-bg opacity-50"></div>
-                <div className="relative z-10">
+                <div className="absolute inset-0 grid-bg opacity-50 z-0" style={{zIndex: 1}}></div>
+                <div className="relative z-20">
                   <Image
                     src="/images/magazine.png"
                     alt="AI CAPTAINS Magazine"
                     width={500}
                     height={300}
                     className="mx-auto object-contain"
+                    priority
                   />
                   <div className="mt-4 text-center">
                     <Button
@@ -282,6 +394,7 @@ function AICaptainsContent() {
                       width={200}
                       height={300}
                       className="w-full object-cover"
+                      priority
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
                       <p className="text-yellow-500 text-sm font-bold">TERMINAL NAVIGATION TOOLKIT</p>
@@ -313,6 +426,7 @@ function AICaptainsContent() {
                       width={200}
                       height={300}
                       className="w-full object-cover"
+                      priority
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
                       <p className="text-yellow-500 text-sm font-bold">IMPLEMENTATION CALL</p>
@@ -344,6 +458,7 @@ function AICaptainsContent() {
                       width={200}
                       height={300}
                       className="w-full object-cover"
+                      priority
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
                       <p className="text-yellow-500 text-sm font-bold">AI CAPTAINS ACADEMY</p>
@@ -375,6 +490,7 @@ function AICaptainsContent() {
                       width={200}
                       height={300}
                       className="w-full object-cover"
+                      priority
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
                       <p className="text-yellow-500 text-sm font-bold">CONTENT COMMANDER CHALLENGE</p>

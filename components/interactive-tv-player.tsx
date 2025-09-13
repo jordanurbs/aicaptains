@@ -39,21 +39,17 @@ const useResponsiveControlPositions = () => {
   
   // Special positioning for power button above 1240px
   const getPowerButtonPosition = () => {
-    if (screenWidth >= 1422) {
-      // Perfect at 1422px and above
+    if (screenWidth >= 1400) {
+      // 1400px and above
       return { 
         top: '44.5%', 
-        right: '10.5%' 
+        right: '7%'
       }
-    } else if (screenWidth > 1240) {
-      // Between 1240px-1422px: interpolate to reach perfect position at 1422px
-      const progress = (screenWidth - 1240) / (1422 - 1240) // 0 to 1
-      const startRight = 5 // 5% at 1240px
-      const endRight = 10.5 // 10.5% at 1422px
-      const interpolatedRight = startRight + (endRight - startRight) * progress
+    } else if (screenWidth >= 1240) {
+      // 1240px-1400px range
       return { 
         top: '44.5%', 
-        right: `${interpolatedRight}%` 
+        right: '7%'
       }
     } else {
       return { 
@@ -73,18 +69,15 @@ const useResponsiveControlPositions = () => {
       // Hide knobs completely under 1080px (they're just for fun anyway)
       visibility = false
     } else if (screenWidth >= 1400) {
-      // Very large screens: move controls further left
-      rightPosition = '20%' // 17% + 3%
+      // 1400px and above
+      rightPosition = '18%'
       scale = 1
     } else if (screenWidth >= 1240) {
-      // INTERPOLATING range (1240px-1400px): Smooth transition like power button
-      const progress = (screenWidth - 1240) / (1400 - 1240) // 0 to 1
-      const startRight = 17 // 17% at 1240px (perfect position)
-      const endRight = 20   // 20% at 1400px  
-      const interpolatedRight = startRight + (endRight - startRight) * progress
-      rightPosition = `${interpolatedRight}%`
+      // 1240px-1400px range
+      rightPosition = '18%'
       
       // Progressive scaling down as screen gets smaller from 1400px to 1240px
+      const progress = (screenWidth - 1240) / (1400 - 1240) // 0 to 1
       scale = 0.7 + (0.3 * progress) // Scale from 0.7 to 1.0
     } else {
       // Use normal responsive logic for smaller screens
@@ -112,16 +105,10 @@ const useResponsiveControlPositions = () => {
     muteButton: { 
       right: (() => {
         if (screenWidth >= 1400) {
-          // At 1400px and above, use a fixed position
-          return '21%' // 18% + 3%
+          return '19%' // 1400px and above
         } else if (screenWidth >= 1240) {
-          // Interpolate between 1240px-1400px like the knobs
-          const progress = (screenWidth - 1240) / (1400 - 1240) // 0 to 1
-          const startRight = 18 // 18% at 1240px (perfect position)
-          const endRight = 21   // 21% at 1400px
-          return `${startRight + (endRight - startRight) * progress}%`
+          return '16%' // 1240px-1400px range
         } else {
-          // Use normal responsive logic for smaller screens
           return getResponsivePosition(18)
         }
       })()
@@ -180,6 +167,69 @@ export function InteractiveTVPlayer({
   
   // The famous Konami Code
   const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA']
+
+  // Space bar pause/play functionality
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle spacebar for video control
+      if (e.code === 'Space' || e.key === ' ') {
+        e.preventDefault() // Prevent page scrolling
+        
+        // Only respond to spacebar if TV is on and not in static/booting state
+        if (tvState === 'off' || tvState === 'booting' || tvState === 'static') {
+          return
+        }
+        
+        if (videoRef.current) {
+          if (tvState === 'playing' && !videoRef.current.paused) {
+            // Pause the video
+            videoRef.current.pause()
+            setTvState('paused')
+            setShowPlayButton(true)
+            playSound('click')
+          } else if (tvState === 'paused' || showPlayButton) {
+            // Play the video
+            // User interaction allows unmuting (unless explicitly muted)
+            if (!isExplicitlyMuted) {
+              videoRef.current.muted = false
+              setIsMuted(false)
+            }
+            
+            const playPromise = videoRef.current.play()
+            if (playPromise !== undefined) {
+              playPromise
+                .then(() => {
+                  setTvState('playing')
+                  setShowPlayButton(false)
+                  playSound('select')
+                })
+                .catch((error) => {
+                  console.error('Spacebar play failed:', error)
+                  // Fallback to muted play
+                  if (videoRef.current) {
+                    videoRef.current.muted = true
+                    setIsMuted(true)
+                    videoRef.current.play().then(() => {
+                      setTvState('playing')
+                      setShowPlayButton(false)
+                      playSound('select')
+                    }).catch(() => {
+                      console.error('Spacebar muted play failed')
+                    })
+                  }
+                })
+            }
+          }
+        }
+      }
+    }
+
+    // Add event listener to document for global keyboard handling
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [tvState, showPlayButton, isExplicitlyMuted, playSound])
 
   // Video format fallback helper (temporarily disabled)
   const tryWebMFallback = useCallback(() => {
@@ -654,6 +704,11 @@ export function InteractiveTVPlayer({
             }}
             onPlay={handleVideoPlay}
             onPause={handleVideoPause}
+            onEnded={() => {
+              console.log('Video ended - auto-transitioning to homescreen')
+              playSound('select')
+              onSkipToMain?.()
+            }}
             onLoadStart={() => console.log('Video loading started')}
             onCanPlay={() => console.log('Video can start playing')}
             onLoadedData={() => console.log('Video data loaded')}
@@ -676,7 +731,7 @@ export function InteractiveTVPlayer({
               }
             }}
             muted={isMuted}
-            loop
+            loop={false}
             preload="auto"
             playsInline
             controls={false}
@@ -747,7 +802,7 @@ export function InteractiveTVPlayer({
       <div className="absolute inset-0 pointer-events-none z-50">
         {/* Power Button - positioned on the right panel */}
         <button
-          className="absolute pointer-events-auto z-50 hover:bg-red-500/40 cursor-pointer"
+          className="absolute pointer-events-auto z-50 cursor-pointer"
           style={{ 
             top: controlPositions.powerButton.top, 
             right: controlPositions.powerButton.right, 
@@ -899,7 +954,7 @@ export function InteractiveTVPlayer({
 
         {/* Mute Button - circular button below the knobs */}
         <button
-          className="absolute pointer-events-auto z-50 hover:bg-gray-500/40 cursor-pointer"
+          className="absolute pointer-events-auto z-50 cursor-pointer"
           style={{ 
             top: '64%', 
             right: controlPositions.muteButton.right, 
@@ -1000,7 +1055,7 @@ export function InteractiveTVPlayer({
         </div>
       )}
 
-      {/* Konami Code Detection */}
+      {/* Konami Code Detection - Now handles both Konami code and provides focus for keyboard events */}
       <div 
         className="absolute inset-0 focus:outline-none" 
         tabIndex={0}

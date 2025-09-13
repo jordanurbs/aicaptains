@@ -58,8 +58,8 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
       {/* Logo at the top - always visible */}
       <div className="flex justify-center pt-6 pb-4 z-40">
         <Image
-          src="/images/aiclogo.png"
-          alt="AI CAPTAINS"
+          src="/images/academy-logo-min.png"
+          alt="AI CAPTAINS ACADEMY"
           width={200}
           height={100}
           className="object-contain"

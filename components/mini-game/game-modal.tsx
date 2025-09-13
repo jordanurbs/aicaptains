@@ -124,7 +124,7 @@ export function GameModal({ isOpen, onClose }: GameModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
       <div className="relative bg-gray-900 border-4 border-yellow-500 p-4 rounded-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-5xl md:text-6xl font-bold text-yellow-500 retro-text">AI CAPTAINS: SPACE DEFENDER</h2>
+          <h2 className="text-5xl md:text-6xl font-bold text-yellow-500 retro-text">AI CAPTAINS ACADEMY: SPACE DEFENDER</h2>
           <div className="flex gap-2">
             <Button
               variant="outline"

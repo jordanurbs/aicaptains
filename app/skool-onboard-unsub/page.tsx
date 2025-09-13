@@ -25,8 +25,8 @@ export default function Unsubscribed() {
         {/* AI CAPTAINS Logo Image */}
         <div className="mb-8">
           <Image
-            src="/images/aiclogo.png"
-            alt="AI CAPTAINS"
+            src="/images/academy-logo-min.png"
+            alt="AI CAPTAINS ACADEMY"
             width={500}
             height={250}
             className="object-contain"
@@ -64,7 +64,7 @@ export default function Unsubscribed() {
               href="/"
               className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-semibold underline decoration-cyan-400/50 hover:decoration-cyan-300"
             >
-              return to AI Captains
+              return to AI Captains Academy
             </Link>
             {" "}and sign up again.
           </p>
