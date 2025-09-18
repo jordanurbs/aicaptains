@@ -388,7 +388,7 @@ function AICaptainsContent() {
                 TESTIMONIALS
               </Button>
 
-              {/* Book a Call Button */}
+              {/* Get Help Now Button */}
               <Button
                 variant="outline"
                 className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold px-4 py-2"
@@ -399,7 +399,7 @@ function AICaptainsContent() {
                 onMouseEnter={handleHover}
               >
                 <Calendar className="w-4 h-4 mr-1" />
-                BOOK A CALL
+                GET HELP NOW
               </Button>
 
 

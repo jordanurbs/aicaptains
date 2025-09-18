@@ -204,7 +204,7 @@ export function MobileNavigation({
                 onMouseEnter={onHover}
               >
                 <Calendar className="w-4 h-4 mr-2" />
-                BOOK A CALL
+                GET HELP NOW
               </Button>
 
               <Button
