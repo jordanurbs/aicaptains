@@ -43,13 +43,13 @@ const useResponsiveControlPositions = () => {
       // 1400px and above
       return { 
         top: '44.5%', 
-        right: '7%'
+        right: '5%'
       }
     } else if (screenWidth >= 1240) {
       // 1240px-1400px range
       return { 
         top: '44.5%', 
-        right: '7%'
+        right: '5%'
       }
     } else {
       return { 
@@ -1028,7 +1028,7 @@ export function InteractiveTVPlayer({
           className="absolute pointer-events-auto group z-50 cursor-pointer"
           style={{ 
             bottom: '7.5%', 
-            right: '31%', 
+            right: '28%', 
             width: '80px', 
             height: '60px'
           }}
@@ -1047,13 +1047,6 @@ export function InteractiveTVPlayer({
 
 
 
-      {/* Channel Display */}
-      {tvState !== 'off' && (
-        <div className="absolute top-4 right-4 bg-black/80 px-3 py-1 rounded text-orange-400 text-sm border border-orange-500 font-mono">
-          CH {currentChannel + 1} - {channelNames[currentChannel]}
-          {easterEggActive && <span className="ml-2 animate-pulse">⭐</span>}
-        </div>
-      )}
 
       {/* Konami Code Detection - Now handles both Konami code and provides focus for keyboard events */}
       <div 

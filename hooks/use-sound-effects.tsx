@@ -10,6 +10,7 @@ export function useSoundEffects() {
   const backgroundMusicRef = useRef<HTMLAudioElement | null>(null)
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false)
   const [originalBackgroundVolume, setOriginalBackgroundVolume] = useState(0.2)
+  const [hasUserInteracted, setHasUserInteracted] = useState(false)
   
   const [audioElements, setAudioElements] = useState<Record<SoundType, HTMLAudioElement | null>>({
     click: null,
@@ -25,7 +26,7 @@ export function useSoundEffects() {
     const sounds: Record<SoundType, HTMLAudioElement> = {
       click: new Audio("/sounds/retro-video-game-coin-pickup.mp3"),
       select: new Audio("/sounds/level-up.mp3"),
-      hover: new Audio("/sounds/video-game-select.mp3"),
+      hover: new Audio("/sounds/retro-select.mp3"),
       startup: new Audio("/sounds/magic.mp3"),
       background: new Audio("/sounds/bgmusic.mp3"),
       scroll: new Audio("/sounds/retro-select.mp3"),
@@ -34,11 +35,13 @@ export function useSoundEffects() {
     // Set volume for each sound
     Object.values(sounds).forEach((audio) => {
       audio.volume = 0.3 // Set a reasonable default volume
+      // Preload audio
+      audio.load()
     })
 
     // Startup sound can be a bit louder
     sounds.startup.volume = 0.4
-    
+
     // Background music should loop and be a bit quieter
     sounds.background.loop = true
     sounds.background.volume = 0.2
@@ -48,12 +51,26 @@ export function useSoundEffects() {
     setOriginalBackgroundVolume(sounds.background.volume)
     setIsLoaded(true)
 
+    // Handle user interaction for audio context
+    const handleUserInteraction = () => {
+      if (!hasUserInteracted) {
+        setHasUserInteracted(true)
+        console.log("User interaction detected - audio context unlocked")
+      }
+    }
+
+    // Add listeners for user interaction
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
+
     // Cleanup
     return () => {
       Object.values(sounds).forEach((audio) => {
         audio.pause()
         audio.currentTime = 0
       })
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
     }
   }, [])
 
@@ -71,17 +88,27 @@ export function useSoundEffects() {
   // Play sound function
   const playSound = useCallback(
     (type: SoundType) => {
-      if (isMuted || !isLoaded || !audioElements[type]) return
+      // Don't play any sounds if muted or not loaded
+      if (isMuted || !isLoaded || !audioElements[type]) {
+        return
+      }
+
+      // Don't play any sounds before user interaction
+      if (!hasUserInteracted) {
+        console.log("Waiting for user interaction before playing sounds")
+        return
+      }
 
       // Special handling for background music
       if (type === "background") {
-        if (!isBackgroundMusicPlaying) {
+        if (!isBackgroundMusicPlaying && hasUserInteracted) {
           const audio = audioElements[type]!
           audio.currentTime = 0
-          audio.play().catch((error) => {
-            console.log("Background music playback error:", error)
+          audio.play().then(() => {
+            setIsBackgroundMusicPlaying(true)
+          }).catch((error) => {
+            console.error("Background music playback error:", error)
           })
-          setIsBackgroundMusicPlaying(true)
         }
         return
       }
@@ -92,11 +119,10 @@ export function useSoundEffects() {
 
       // Play the sound
       audio.play().catch((error) => {
-        // Handle any autoplay restrictions
-        console.log("Audio playback error:", error)
+        console.error(`Audio playback error for ${type}:`, error)
       })
     },
-    [audioElements, isMuted, isLoaded, isBackgroundMusicPlaying],
+    [audioElements, isMuted, isLoaded, isBackgroundMusicPlaying, hasUserInteracted],
   )
 
   // Toggle mute function - Fixed to properly control background music

@@ -1,0 +1,310 @@
+
+> my-v0-project@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.2.4
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.8.122:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3s
+ ○ Compiling /api/generate-response ...
+ ✓ Compiled /api/generate-response in 970ms (360 modules)
+[2025-09-18T05:26:00.536Z] Generate Response Request: {
+  ip: '::1',
+  goal: 'Test debugging',
+  excuse: 'API not working',
+  isPresetExcuse: false
+}
+Venice AI API attempt 1 starting...
+Raw Venice AI response: <think>
+Okay, the user wants me to act as a witty, psychologically compelling AI coach helping someone overcome excuses and take action on their goals. The context is a goal called "Test debugging" and the excuse is "API not working", but it's not a preset excuse. So, I need to generate a response that fits the specified JSON format with a response and a CTA.
+
+First, I need to acknowledge the excuse without being dismissive. The user is saying the API isn't working, so I should validate that fee...
+Initial parse failed, attempting extraction...
+Failed to parse AI response as JSON: Error: No valid JSON structure found in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:241:14)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:362:30)
+  239 |         console.log('Extracted and parsed JSON from response')
+  240 |       } else {
+> 241 |         throw new Error('No valid JSON structure found in response')
+      |              ^
+  242 |       }
+  243 |     }
+  244 |     if (parsed.response && parsed.cta) {
+Content that failed to parse: <think>
+Okay, the user wants me to act as a witty, psychologically compelling AI coach helping someone overcome excuses and take action on their goals. The context is a goal called "Test debugging" and the excuse is "API not working", but it's not a preset excuse. So, I need to generate a response that fits the specified JSON format with a response and a CTA.
+
+First, I need to acknowledge the excuse without being dismissive. The user is saying the API isn't working, so I should validate that feeling. Then reframe it as a starting point rather than a barrier. Maybe use social proof or urgency. The tone should be encouraging but with cheeky confidence. Also, create momentum toward action.
+
+Looking at the examples provided, they use phrases like "Every AI Captain started exactly where you are—confused but curious." So, I can start by validating the problem and then turning it into an opportunity. Maybe something like acknowledging the struggle but saying it's a chance to learn.
+
+For the CTA, it needs to be short and punchy. Maybe something like "Debugging is a skill—master it now, not later." Or "Fix the API, but first, let’s tackle this together!"
+
+Wait, the example uses "The best time to plant a tree was 20 years ago. The second best time? Right now." So maybe a similar urgency. "The best time to fix the API was yesterday. Now’s the second best time
+Venice AI API failed after 3 attempts: Error: Invalid JSON response from Venice AI: No valid JSON structure found in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:271:10)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:362:30)
+  269 |
+  270 |     // Don't throw here - let it retry or fall back
+> 271 |     throw new Error('Invalid JSON response from Venice AI: ' + (parseError as Error).message)
+      |          ^
+  272 |   }
+  273 | }
+  274 |
+ POST /api/generate-response 200 in 3769ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1737ms (982 modules)
+ GET / 200 in 2020ms
+ ✓ Compiled /_not-found in 362ms (972 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 144ms
+ ✓ Compiled in 208ms (454 modules)
+ GET / 200 in 18ms
+ ✓ Compiled in 148ms (454 modules)
+ GET / 200 in 7ms
+ ✓ Compiled in 291ms (986 modules)
+ GET / 200 in 49ms
+ ✓ Compiled in 243ms (982 modules)
+ GET / 200 in 50ms
+ ✓ Compiled in 255ms (982 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 243ms (982 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 188ms (982 modules)
+ GET / 200 in 41ms
+ ✓ Compiled in 186ms (982 modules)
+ GET / 200 in 49ms
+ ✓ Compiled in 189ms (982 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 209ms (982 modules)
+ GET / 200 in 30ms
+ ✓ Compiled in 183ms (982 modules)
+ GET / 200 in 43ms
+ ✓ Compiled in 347ms (982 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 172ms (982 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 240ms (982 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 218ms (982 modules)
+ GET / 200 in 46ms
+ ✓ Compiled in 213ms (982 modules)
+ GET / 200 in 45ms
+ ✓ Compiled in 221ms (982 modules)
+ GET / 200 in 47ms
+ ✓ Compiled in 257ms (982 modules)
+ GET / 200 in 36ms
+ ✓ Compiled in 201ms (982 modules)
+ GET / 200 in 50ms
+ ✓ Compiled in 206ms (982 modules)
+ GET / 200 in 37ms
+ ✓ Compiled in 131ms (451 modules)
+ GET / 200 in 7ms
+ ✓ Compiled in 186ms (451 modules)
+ GET / 200 in 19ms
+ ✓ Compiled /api/generate-response in 110ms (550 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/jordanurbs/JAYEYE/ai-captains/.next/server/app/page.js'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/jordanurbs/JAYEYE/ai-captains/.next/server/app/page.js',
+  page: '/'
+}
+[2025-09-18T05:33:08.867Z] Generate Response Request: {
+  ip: '::1',
+  goal: 'Build an AI app',
+  excuse: 'I dont have enough experience',
+  isPresetExcuse: false
+}
+Venice AI API attempt 1 starting...
+ ○ Compiling /_error ...
+Venice AI API failed after 3 attempts: Error: Venice API error: 404 Not Found
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:199:10)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:354:30)
+  197 |
+  198 |   if (!response.ok) {
+> 199 |     throw new Error(`Venice API error: ${response.status} ${response.statusText}`)
+      |          ^
+  200 |   }
+  201 |
+  202 |   const data: VeniceAPIResponse = await response.json()
+ POST /api/generate-response 200 in 942ms
+ ✓ Compiled /_error in 815ms (1316 modules)
+ GET / 500 in 1144ms
+ GET / 200 in 49ms
+ GET / 200 in 6ms
+ GET / 200 in 99ms
+ ✓ Compiled /_not-found in 175ms (1320 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 239ms
+ GET /_next/static/css/app/layout.css?v=1758173589866 404 in 251ms
+ GET /_next/static/chunks/main-app.js?v=1758173589866 404 in 44ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 31ms
+ GET /_next/static/chunks/app/page.js 404 in 30ms
+ ✓ Compiled in 275ms (1334 modules)
+ GET / 200 in 121ms
+ GET / 200 in 21ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 19ms
+ GET /_next/static/css/app/layout.css?v=1758173610612 404 in 15ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 83ms
+ GET /_next/static/chunks/app/page.js 404 in 14ms
+ GET / 200 in 22ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 15ms
+ GET /_next/static/css/app/layout.css?v=1758173706217 404 in 14ms
+ GET /_next/static/chunks/app/page.js 404 in 36ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 37ms
+ GET / 200 in 17ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 14ms
+ GET /_next/static/css/app/layout.css?v=1758173718420 404 in 13ms
+ GET /_next/static/chunks/app/page.js 404 in 29ms
+ GET /_next/static/chunks/app-pages-internals.js 404 in 31ms
+ ✓ Compiled in 535ms (1268 modules)
+ ✓ Compiled in 269ms (1268 modules)
+ ✓ Compiled in 261ms (1268 modules)
+ ✓ Compiled in 166ms (692 modules)
+ ✓ Compiled in 228ms (1268 modules)
+ ✓ Compiled in 217ms (1268 modules)
+ ✓ Compiled in 256ms (1268 modules)
+ ✓ Compiled in 205ms (1268 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/jordanurbs/JAYEYE/ai-captains/.next/cache/webpack/client-development/8.pack.gz_' -> '/Users/jordanurbs/JAYEYE/ai-captains/.next/cache/webpack/client-development/8.pack.gz'
+ ✓ Compiled in 245ms (1268 modules)
+ ✓ Compiled in 188ms (1268 modules)
+ ✓ Compiled in 279ms (1268 modules)
+ ✓ Compiled in 222ms (1268 modules)
+ ✓ Compiled in 209ms (1268 modules)
+ ✓ Compiled in 272ms (1268 modules)
+ ✓ Compiled in 257ms (1268 modules)
+ ✓ Compiled in 198ms (692 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/jordanurbs/JAYEYE/ai-captains/.next/cache/webpack/client-development/1.pack.gz_' -> '/Users/jordanurbs/JAYEYE/ai-captains/.next/cache/webpack/client-development/1.pack.gz'
+ ✓ Compiled in 153ms (692 modules)
+ ✓ Compiled in 174ms (692 modules)
+ ✓ Compiled in 173ms (692 modules)
+ ✓ Compiled in 210ms (692 modules)
+ ✓ Compiled in 579ms (1268 modules)
+ ✓ Compiled in 198ms (692 modules)
+ ✓ Compiled in 151ms (692 modules)
+ ✓ Compiled in 181ms (692 modules)
+ ✓ Compiled /api/generate-response in 162ms (595 modules)
+[2025-09-18T05:56:34.625Z] Generate Response Request: {
+  ip: '::1',
+  goal: 'Test goal',
+  excuse: 'Test excuse',
+  isPresetExcuse: false
+}
+Venice AI API attempt 1 starting...
+Raw Venice AI response: {
+  "response": "Your 'Test excuse' is a chance to test your commitment, not a reason to stay on shore. Now's the time to set sail.",
+  "cta": "Chart Your Course"...
+Initial parse failed, attempting extraction...
+Failed to parse AI response as JSON: Error: No valid JSON structure found in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:233:14)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:354:30)
+  231 |         console.log('Extracted and parsed JSON from response')
+  232 |       } else {
+> 233 |         throw new Error('No valid JSON structure found in response')
+      |              ^
+  234 |       }
+  235 |     }
+  236 |     if (parsed.response && parsed.cta) {
+Content that failed to parse: {
+  "response": "Your 'Test excuse' is a chance to test your commitment, not a reason to stay on shore. Now's the time to set sail.",
+  "cta": "Chart Your Course"
+Venice AI API failed after 3 attempts: Error: Invalid JSON response from Venice AI: No valid JSON structure found in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:263:10)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:354:30)
+  261 |
+  262 |     // Don't throw here - let it retry or fall back
+> 263 |     throw new Error('Invalid JSON response from Venice AI: ' + (parseError as Error).message)
+      |          ^
+  264 |   }
+  265 | }
+  266 |
+ POST /api/generate-response 200 in 1193ms
+ ✓ Compiled in 216ms (1287 modules)
+[2025-09-18T05:57:16.623Z] Generate Response Request: {
+  ip: '::1',
+  goal: 'Build an AI app',
+  excuse: 'I dont know where to start',
+  isPresetExcuse: true
+}
+Venice AI API attempt 1 starting...
+Raw Venice AI response: {
+  "response": "You're about to navigate uncharted waters, and that's where the greatest discoveries happen! Let's chart your course",
+  "cta": "Plot Your Path"...
+Initial parse failed, attempting extraction...
+Failed to parse AI response as JSON: Error: No valid JSON structure found in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:233:14)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:354:30)
+  231 |         console.log('Extracted and parsed JSON from response')
+  232 |       } else {
+> 233 |         throw new Error('No valid JSON structure found in response')
+      |              ^
+  234 |       }
+  235 |     }
+  236 |     if (parsed.response && parsed.cta) {
+Content that failed to parse: {
+  "response": "You're about to navigate uncharted waters, and that's where the greatest discoveries happen! Let's chart your course",
+  "cta": "Plot Your Path"
+Venice AI API failed after 3 attempts: Error: Invalid JSON response from Venice AI: No valid JSON structure found in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:263:10)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:354:30)
+  261 |
+  262 |     // Don't throw here - let it retry or fall back
+> 263 |     throw new Error('Invalid JSON response from Venice AI: ' + (parseError as Error).message)
+      |          ^
+  264 |   }
+  265 | }
+  266 |
+ POST /api/generate-response 200 in 1075ms
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename '/Users/jordanurbs/JAYEYE/ai-captains/.next/cache/webpack/server-development/1.pack.gz_' -> '/Users/jordanurbs/JAYEYE/ai-captains/.next/cache/webpack/server-development/1.pack.gz'
+ ✓ Compiled in 176ms (692 modules)
+ ✓ Compiled in 240ms (1268 modules)
+ ✓ Compiled in 143ms (692 modules)
+ ✓ Compiled in 172ms (692 modules)
+ ✓ Compiled in 139ms (692 modules)
+ ✓ Compiled in 135ms (692 modules)
+ ✓ Compiled /api/generate-response in 93ms (595 modules)
+[2025-09-18T06:07:19.687Z] Generate Response Request: {
+  ip: '::1',
+  goal: 'Learn to code AI apps',
+  excuse: 'Too complex for me',
+  isPresetExcuse: false
+}
+Venice AI API attempt 1 starting...
+Raw Venice AI response (first 200 chars): {
+  "response": "You're right, coding AI apps can seem complex, but that's where you can shine by breaking it down into manageable parts and focusing on one puzzle at a time.",
+  "cta": "Start Small N
+Direct parse failed, attempting to extract JSON...
+Failed to parse AI response as JSON: Error: Could not find valid JSON structure in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:242:14)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:364:30)
+  240 |         }
+  241 |       } else {
+> 242 |         throw new Error('Could not find valid JSON structure in response')
+      |              ^
+  243 |       }
+  244 |     }
+  245 |
+Content that failed to parse: {
+  "response": "You're right, coding AI apps can seem complex, but that's where you can shine by breaking it down into manageable parts and focusing on one puzzle at a time.",
+  "cta": "Start Small Now"
+Venice AI API failed after 3 attempts: Error: Invalid JSON response from Venice AI: Could not find valid JSON structure in response
+    at attemptVeniceAPICall (app/api/generate-response/route.ts:273:10)
+    at async generateWittyResponse (app/api/generate-response/route.ts:125:13)
+    at async POST (app/api/generate-response/route.ts:364:30)
+  271 |
+  272 |     // Don't throw here - let it retry or fall back
+> 273 |     throw new Error('Invalid JSON response from Venice AI: ' + (parseError as Error).message)
+      |          ^
+  274 |   }
+  275 | }
+  276 |
+ POST /api/generate-response 200 in 1157ms

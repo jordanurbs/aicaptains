@@ -14,7 +14,14 @@
       "mcp__ide__getDiagnostics",
       "Bash(npm run lint)",
       "Bash(git checkout:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(cat:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(pkill:*)",
+      "Bash(lsof:*)",
+      "Bash(nslookup:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

@@ -136,19 +136,7 @@ export function RetroFooter({ className = "" }: RetroFooterProps) {
             </Button>
           </div>
 
-          {/* Scroll Up Button */}
-          <div className="scroll-up-container">
-            <Button
-              variant="outline"
-              size="icon"
-              className="scroll-up-button border-cyan-400 text-cyan-400 hover:bg-cyan-400 hover:text-black bg-transparent"
-              onClick={handleScrollToTop}
-              onMouseEnter={handleHover}
-              title="Scroll to top"
-            >
-              <ChevronUp className="w-6 h-6" />
-            </Button>
-          </div>
+          {/* Note: Scroll Up Button moved to sticky position outside footer */}
         </div>
       </div>
     </section>

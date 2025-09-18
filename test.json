@@ -1,0 +1,11 @@
+{
+  "model": "llama-3.2-3b:strip_thinking_response=true",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Return ONLY this JSON and nothing else: {\"response\": \"Every expert was once a beginner.\", \"cta\": \"Start today\"}"
+    }
+  ],
+  "max_tokens": 100,
+  "temperature": 0.1
+}

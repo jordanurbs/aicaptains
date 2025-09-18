@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Positioning Test</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .test-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        .test-sidebar {
+            position: sticky;
+            top: 0;
+            min-height: 100vh;
+            max-height: 100vh;
+            width: 320px;
+            background: #1f2937;
+            color: white;
+            padding: 24px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            flex-shrink: 0;
+            align-self: flex-start;
+            contain: layout style;
+            will-change: transform;
+        }
+
+        .test-content {
+            flex: 1;
+            width: calc(100% - 320px);
+            min-height: 100vh;
+            background: black;
+            color: white;
+            contain: layout;
+        }
+
+        .test-top-bar {
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 16px;
+            border-bottom: 2px solid #eab308;
+            z-index: 50;
+            contain: layout style;
+            will-change: transform;
+        }
+
+        .content-section {
+            height: 500px;
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .sidebar-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-sidebar">
+            <h2>Sticky Sidebar</h2>
+            <div class="sidebar-item">Navigation Item 1</div>
+            <div class="sidebar-item">Navigation Item 2</div>
+            <div class="sidebar-item">Navigation Item 3</div>
+            <div class="sidebar-item">Navigation Item 4</div>
+            <div class="sidebar-item">Navigation Item 5</div>
+            <div class="sidebar-item">Long content to test scrolling within sidebar. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+            <div class="sidebar-item">More content</div>
+            <div class="sidebar-item">Even more content</div>
+            <div class="sidebar-item">Final item</div>
+        </div>
+
+        <div class="test-content">
+            <div class="test-top-bar">
+                <strong>Sticky Top Bar - Should stick to top when scrolling</strong>
+            </div>
+
+            <div class="content-section" style="background: #333;">
+                <h2>Section 1</h2>
+                <p>This is the first section. The sidebar should remain sticky on the left.</p>
+            </div>
+
+            <div class="content-section" style="background: #444;">
+                <h2>Section 2</h2>
+                <p>This is the second section. Scroll down to test sticky behavior.</p>
+            </div>
+
+            <div class="content-section" style="background: #555;">
+                <h2>Section 3</h2>
+                <p>This is the third section. The top bar should stick to the top.</p>
+            </div>
+
+            <div class="content-section" style="background: #666;">
+                <h2>Section 4</h2>
+                <p>This is the fourth section. Both sticky elements should work properly.</p>
+            </div>
+
+            <div class="content-section" style="background: #777;">
+                <h2>Section 5</h2>
+                <p>This is the fifth section. Test complete!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test script to verify sticky behavior
+        window.addEventListener('scroll', () => {
+            const sidebar = document.querySelector('.test-sidebar');
+            const topBar = document.querySelector('.test-top-bar');
+
+            console.log('Scroll position:', window.scrollY);
+            console.log('Sidebar top:', sidebar.getBoundingClientRect().top);
+            console.log('Top bar top:', topBar.getBoundingClientRect().top);
+        });
+    </script>
+</body>
+</html>

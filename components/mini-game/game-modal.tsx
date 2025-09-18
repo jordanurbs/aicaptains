@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { X, Volume2, VolumeX } from "lucide-react"
+import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSound } from "@/components/sound-provider"
 import { GAME_WIDTH, GAME_HEIGHT, initGameState, updateGameState, renderGame, type GameState } from "./game-engine"
@@ -15,10 +15,9 @@ export function GameModal({ isOpen, onClose }: GameModalProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [gameState, setGameState] = useState<GameState>(initGameState())
   const [keys, setKeys] = useState<Set<string>>(new Set())
-  const [isMuted, setIsMuted] = useState(false)
   const animationFrameRef = useRef<number>(0)
   const lastTimeRef = useRef<number>(0)
-  const { playSound } = useSound()
+  const { playSound, isMuted } = useSound()
 
   // Initialize game
   useEffect(() => {
@@ -126,14 +125,6 @@ export function GameModal({ isOpen, onClose }: GameModalProps) {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-5xl md:text-6xl font-bold text-yellow-500 retro-text">AI CAPTAINS ACADEMY: SPACE DEFENDER</h2>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="border-yellow-500 text-yellow-500"
-              onClick={() => setIsMuted(!isMuted)}
-            >
-              {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
-            </Button>
             <Button variant="outline" size="icon" className="border-yellow-500 text-yellow-500" onClick={onClose}>
               <X className="h-5 w-5" />
             </Button>

@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { Menu, Twitter, Linkedin, Youtube, ChevronRight, Star, Gamepad2, Zap } from "lucide-react"
+import { X as TwitterIcon, Play as YoutubeIcon, Zap, Volume2, VolumeX, MessageSquare, Calendar, Wrench, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SoundProvider } from "@/components/sound-provider"
 import { SoundToggle } from "@/components/sound-toggle"
@@ -16,24 +16,53 @@ import { DigitalMarquee } from "@/components/digital-marquee"
 import { ScrollIndicators } from "@/components/scroll-indicators"
 import { NewsletterSignup } from "@/components/newsletter-signup"
 import { RetroFooter } from "@/components/retro-footer"
+import { InteractiveBuildersDolemma } from "@/components/interactive-builders-dolemma"
+import { TransformationBanner } from "@/components/transformation-banner"
+import { TntCtaSection } from "@/components/tnt-cta-section"
+import { AudienceCards } from "@/components/audience-cards"
+import { EnhancedCourseGrid } from "@/components/enhanced-course-grid"
+import { PricingTiers } from "@/components/pricing-tiers"
+import { MaritimeCursorEffects } from "@/components/maritime-cursor-effects"
+import { CelebrationEffects, useCelebration } from "@/components/celebration-effects"
+import { MaritimeLoading } from "@/components/maritime-loading"
+import { EasterEggs } from "@/components/easter-eggs"
+import { MagazineHeroSection } from "@/components/magazine-hero-section"
+import { MobileNavigation } from "@/components/mobile-navigation"
+import { StickyScrollToTop } from "@/components/sticky-scroll-to-top"
 
 // Wrap the main component with sound effects
 function AICaptainsContent() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [selectedItem, setSelectedItem] = useState(0)
+  // Removed selectedItem state - handled by EnhancedCourseGrid
   const [showIntro, setShowIntro] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [transitionStage, setTransitionStage] = useState<'idle' | 'instant-glitch' | 'shrinking' | 'static' | 'expanding' | 'tuning' | 'signal-lock' | 'complete'>('idle')
-  const [imagesLoaded, setImagesLoaded] = useState(false)
-  const { playSound, isLoaded } = useSound()
+  const [showWhimsicalEffects, setShowWhimsicalEffects] = useState(false)
+  const [hasStartedMusic, setHasStartedMusic] = useState(false)
+  const [userHasInteracted, setUserHasInteracted] = useState(false)
+  const { playSound, isLoaded, toggleMute, isMuted, fadeBackgroundMusic, originalBackgroundVolume } = useSound()
+  const { celebrate, CelebrationComponent } = useCelebration()
 
   // Check if we should show the intro (only once per session)
   useEffect(() => {
     const hasSeenIntro = sessionStorage.getItem("hasSeenIntro")
     if (hasSeenIntro) {
       setShowIntro(false)
+      setShowWhimsicalEffects(true)
     }
   }, [])
+
+  // Listen for celebration events from components
+  useEffect(() => {
+    const handleCelebrationEvent = (event: CustomEvent) => {
+      const { type } = event.detail
+      celebrate(type)
+    }
+
+    window.addEventListener('celebrate', handleCelebrationEvent as EventListener)
+    return () => {
+      window.removeEventListener('celebrate', handleCelebrationEvent as EventListener)
+    }
+  }, [celebrate])
 
   // Preload all critical images immediately
   useEffect(() => {
@@ -58,13 +87,32 @@ function AICaptainsContent() {
     Promise.all(imagePromises)
       .then(() => {
         console.log('✅ All images preloaded successfully')
-        setImagesLoaded(true)
       })
       .catch(error => {
         console.warn('⚠️ Some images failed to preload:', error)
-        // Still set as loaded to prevent blocking
-        setImagesLoaded(true)
       })
+  }, [])
+
+  // Track user interaction for audio playback
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      if (!userHasInteracted) {
+        console.log("User interaction detected - can now play background music")
+        setUserHasInteracted(true)
+
+        // Remove the event listeners after first interaction
+        document.removeEventListener('click', handleUserInteraction)
+        document.removeEventListener('touchstart', handleUserInteraction)
+      }
+    }
+
+    document.addEventListener('click', handleUserInteraction)
+    document.addEventListener('touchstart', handleUserInteraction)
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction)
+      document.removeEventListener('touchstart', handleUserInteraction)
+    }
   }, [])
 
   // Handle intro completion with instant glitch and CRT tune-in transition
@@ -75,6 +123,12 @@ function AICaptainsContent() {
     setTransitionStage('instant-glitch')
     console.log("⚡ INSTANT GLITCH TRIGGERED")
     sessionStorage.setItem("hasSeenIntro", "true")
+    
+    // Enable whimsical effects after intro
+    setTimeout(() => {
+      setShowWhimsicalEffects(true)
+      celebrate('achievement')
+    }, 3500)
 
     // Play startup sound immediately
     if (isLoaded) {
@@ -109,9 +163,11 @@ function AICaptainsContent() {
 
     setTimeout(() => {
       setTransitionStage('complete')
-      // Start background music when signal locks in
-      if (isLoaded) {
+      // Auto-play background music after intro completes (if user has interacted)
+      if (isLoaded && !isMuted && userHasInteracted && !hasStartedMusic) {
+        console.log("Starting background music after intro...")
         playSound("background")
+        setHasStartedMusic(true)
       }
     }, 3200) // After signal lock
 
@@ -121,49 +177,61 @@ function AICaptainsContent() {
     }, 3700) // Final cleanup
   }
 
-  // Nintendo-style menu navigation with keyboard
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (showIntro) return // Don't handle keyboard navigation during intro
+  // Keyboard navigation is now handled by EnhancedCourseGrid component
 
-      if (e.key === "ArrowDown") {
-        // Play scroll sound first for better user feedback
-        playSound("scroll")
-        
-        setSelectedItem((prev) => {
-          const newValue = prev < 3 ? prev + 1 : prev
-          if (newValue !== prev) playSound("select")
-          return newValue
-        })
-      } else if (e.key === "ArrowUp") {
-        // Play scroll sound first for better user feedback
-        playSound("scroll")
-        
-        setSelectedItem((prev) => {
-          const newValue = prev > 0 ? prev - 1 : prev
-          if (newValue !== prev) playSound("select")
-          return newValue
-        })
-      } else if (e.key === "Enter") {
-        playSound("click")
+  // Watch for footer visibility to fade out music
+  useEffect(() => {
+    if (!showIntro && typeof window !== 'undefined') {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // Footer is visible, fade out music
+              fadeBackgroundMusic(0.05, 2000) // Fade to very low volume
+            } else {
+              // Footer is not visible, restore music
+              fadeBackgroundMusic(originalBackgroundVolume, 1000)
+            }
+          })
+        },
+        { threshold: 0.1 } // Trigger when 10% of footer is visible
+      )
+
+      // Wait a bit for DOM to be ready
+      setTimeout(() => {
+        const footer = document.querySelector('.retro-footer')
+        if (footer) {
+          observer.observe(footer)
+        }
+      }, 1000)
+
+      return () => {
+        observer.disconnect()
       }
     }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [playSound, showIntro])
+  }, [showIntro, fadeBackgroundMusic, originalBackgroundVolume])
 
   // No more complex preloading detection needed!
 
-  // Handle button click sound
+  // Try to start background music when conditions are met
+  useEffect(() => {
+    if (!showIntro && userHasInteracted && isLoaded && !isMuted && !hasStartedMusic) {
+      console.log("All conditions met - starting background music")
+      playSound("background")
+      setHasStartedMusic(true)
+    }
+  }, [showIntro, userHasInteracted, isLoaded, isMuted, hasStartedMusic, playSound])
+
+  // Handle button click sound and start background music on first interaction
   const handleButtonClick = () => {
     playSound("click")
-  }
 
-  // Handle PRESS START button click
-  const handlePressStart = () => {
-    playSound("click")
-    // No longer start background music here since it's started in the intro sequence
+    // Start background music on first button click after intro
+    if (!showIntro && !hasStartedMusic && !isMuted && userHasInteracted) {
+      console.log("Starting background music on button click")
+      playSound("background")
+      setHasStartedMusic(true)
+    }
   }
 
   // Handle hover sound
@@ -171,22 +239,49 @@ function AICaptainsContent() {
     playSound("hover")
   }
 
-  // Handle smooth scroll to power-up section
-  const handlePowerUpNowClick = () => {
-    playSound("click")
-    
-    // Smooth scroll to the power-up section
-    const powerUpSection = document.getElementById("power-up-section")
-    if (powerUpSection) {
-      powerUpSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      })
+  // Scroll to testimonials section
+  const scrollToTestimonials = () => {
+    const testimonialsSection = document.getElementById('testimonials-section')
+    if (testimonialsSection) {
+      testimonialsSection.scrollIntoView({ behavior: 'smooth' })
+      handleButtonClick()
+    }
+  }
+
+  // Scroll to courses section
+  const scrollToCourses = () => {
+    const coursesSection = document.getElementById('power-up-section')
+    if (coursesSection) {
+      coursesSection.scrollIntoView({ behavior: 'smooth' })
+      handleButtonClick()
+    }
+  }
+
+  // Scroll to TNT section
+  const scrollToTnt = () => {
+    const tntSection = document.getElementById('tnt-section')
+    if (tntSection) {
+      tntSection.scrollIntoView({ behavior: 'smooth' })
+      handleButtonClick()
     }
   }
 
   return (
     <div className="bg-black text-white relative crt-effect transition-container">
+      {/* Whimsical Maritime Effects */}
+      {showWhimsicalEffects && (
+        <>
+          <MaritimeCursorEffects />
+          <EasterEggs />
+        </>
+      )}
+      
+      {/* Celebration Effects */}
+      <CelebrationComponent />
+
+      {/* Sticky Scroll to Top Button */}
+      {!showIntro && <StickyScrollToTop />}
+      
       {/* Scroll Indicators - HIDDEN: Remote control not needed */}
       {/* {!showIntro && <ScrollIndicators />} */}
 
@@ -219,298 +314,254 @@ function AICaptainsContent() {
         </div>
       )}
 
+      {/* Mobile Navigation */}
+      {!showIntro && (
+        <MobileNavigation
+          isMuted={isMuted}
+          toggleMute={toggleMute}
+          onButtonClick={handleButtonClick}
+          onHover={handleHover}
+          scrollToTestimonials={scrollToTestimonials}
+          scrollToCourses={scrollToCourses}
+          scrollToTnt={scrollToTnt}
+        />
+      )}
+
       {/* Homepage content with CRT tune-in effect */}
       {!showIntro && (
-        <div 
+        <div
           className={`relative z-10 ${
-            transitionStage === 'tuning' ? 'transition-channel-tuning' : 
+            transitionStage === 'tuning' ? 'transition-channel-tuning' :
             transitionStage === 'signal-lock' ? 'transition-signal-lock' :
             transitionStage === 'complete' ? 'transition-homepage-enter' : ''
           }`}
         >
           {/* Grid background */}
           <div className="grid-bg fixed inset-0 z-0"></div>
-          <div className="min-h-screen flex flex-col lg:flex-row">
-            {/* Left Sidebar - Sticky on desktop */}
-            <div className="sticky-sidebar bg-gray-900 p-6 border-4 border-yellow-500 rounded-lg lg:rounded-none lg:border-r-4 lg:border-l-0 lg:border-t-0 lg:border-b-0">
-              <div className="space-y-6 h-full flex flex-col">
-                {/* Logo */}
-                <div className="flex justify-center">
-                  <Image
-                    src="/images/academy-logo-min.png"
-                    alt="AI CAPTAINS ACADEMY"
-                    width={300}
-                    height={150}
-                    className="object-contain"
-                    priority
-                  />
-                </div>
 
-                {/* Marquee - now full width */}
-                <div className="flex items-center justify-center">
-                  <DigitalMarquee text="BUILD WITH AI, NOT LIMITS" />
-                </div>
+          {/* Desktop-only Sticky Top Controls Bar - Outside overflow containers */}
+          <div className="hidden lg:block sticky-nav-desktop sticky-nav-optimized sticky-nav-accessible px-6 py-4">
+            <div className="flex justify-end items-center gap-2">
+              {/* Free Toolkit Button - First item */}
+              <Button
+                variant="outline"
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold px-4 py-2"
+                onClick={scrollToTnt}
+                onMouseEnter={handleHover}
+              >
+                <Wrench className="w-4 h-4 mr-1" />
+                FREE TOOLKIT
+              </Button>
+              {/* YouTube Button */}
+              <Button
+                variant="outline"
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold px-4 py-2"
+                onClick={() => {
+                  handleButtonClick()
+                  window.open('https://youtube.com/@jordanurbsai', '_blank')
+                }}
+                onMouseEnter={handleHover}
+              >
+                <YoutubeIcon className="w-4 h-4 mr-1" />
+                YOUTUBE
+              </Button>
 
-                {/* Tagline */}
-                <div className="text-center">
-                  <p className="text-cyan-400 retro-text text-3xl sm:text-4xl md:text-3xl lg:text-4xl retro-leading-tight">COMMAND YOUR FUTURE.</p>
-                  <p className="text-cyan-400 retro-text text-3xl sm:text-4xl md:text-3xl lg:text-4xl retro-leading-tight">NAVIGATE WITH POWER!</p>
-                </div>
+              {/* Courses Button */}
+              <Button
+                variant="outline"
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold px-4 py-2"
+                onClick={scrollToCourses}
+                onMouseEnter={handleHover}
+              >
+                <GraduationCap className="w-4 h-4 mr-1" />
+                COURSES
+              </Button>
 
-                {/* Bio */}
+              {/* Testimonials Button */}
+              <Button
+                variant="outline"
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold px-4 py-2"
+                onClick={scrollToTestimonials}
+                onMouseEnter={handleHover}
+              >
+                <MessageSquare className="w-4 h-4 mr-1" />
+                TESTIMONIALS
+              </Button>
+
+              {/* Book a Call Button */}
+              <Button
+                variant="outline"
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black font-bold px-4 py-2"
+                onClick={() => {
+                  handleButtonClick()
+                  window.open('https://calls.ai-captains.com/', '_blank')
+                }}
+                onMouseEnter={handleHover}
+              >
+                <Calendar className="w-4 h-4 mr-1" />
+                BOOK A CALL
+              </Button>
+
+
+              {/* ENROLL CTA Button - Furthest right */}
+              <Button
+                className="retro-button bg-yellow-500 text-black hover:bg-cyan-400 hover:text-black font-bold px-4 py-2"
+                onClick={() => {
+                  handleButtonClick()
+                  window.open('https://www.skool.com/ai-captains-academy', '_blank')
+                }}
+                onMouseEnter={handleHover}
+              >
+                <Zap className="w-4 h-4 mr-1" />
+                ENROLL NOW
+              </Button>
+
+              {/* Audio Toggle Button */}
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => {
+                  toggleMute()
+                  handleButtonClick()
+                }}
+                className="border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black transition-colors"
+                title={isMuted ? "Unmute sounds" : "Mute sounds"}
+                onMouseEnter={handleHover}
+              >
+                {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+              </Button>
+            </div>
+          </div>
+
+          {/* Left Sidebar - Fixed on desktop, outside scroll container */}
+          <div className="sticky-sidebar bg-gray-900 p-6 border-4 border-yellow-500 rounded-lg lg:rounded-none lg:border-r-4 lg:border-l-0 lg:border-t-0 lg:border-b-0">
+            <div className="space-y-6 h-full flex flex-col">
+              {/* Logo */}
+              <div className="flex justify-center">
+                <Image
+                  src="/images/academy-logo-min.png"
+                  alt="AI CAPTAINS ACADEMY"
+                  width={300}
+                  height={150}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+
+              {/* Marquee - now full width */}
+              <div className="flex items-center justify-center">
+                <DigitalMarquee text="BUILD WITH AI, NOT LIMITS" />
+              </div>
+
+              {/* Tagline */}
+              <div className="text-center">
+                <p className="text-cyan-400 retro-text text-3xl sm:text-4xl md:text-3xl lg:text-3xl xl:text-3xl retro-leading-tight">COMMAND YOUR FUTURE.</p>
+                <p className="text-cyan-400 retro-text text-3xl sm:text-4xl md:text-3xl lg:text-3xl xl:text-3xl retro-leading-tight">NAVIGATE WITH POWER!</p>
+              </div>
+
+              {/* Bio */}
                 <div className="space-y-6 border-t-2 border-b-2 border-yellow-500 py-4">
-                  <p className="text-gray-300 leading-relaxed text-sm">
-                    AI CAPTAINS ACADEMY empowers online builders to build their first business with AI.<br></br><br></br>We transform platform-dependent, no code passengers into AI Captains.</p>
-                </div>
+                <p className="text-gray-300 leading-relaxed text-sm">
+                  AI CAPTAINS ACADEMY transforms platform-dependent no-code passengers into AI Captains.
+              </p></div>
+              {/* Game Button */}
+              <div className="text-center pt-6 pb-6">
+                <GameButton />
+              </div>
 
-                {/* Game Button */}
-                <div className="text-center">
-                  <GameButton />
-                </div>
+              {/* Newsletter Signup */}
+              <div className="py-2">
+                <NewsletterSignup />
+              </div>
 
-                {/* Newsletter Signup */}
-                <div className="py-2">
-                  <NewsletterSignup />
-                </div>
-
-                {/* Social Links */}
-                <div className="space-y-4">
-                  <div className="flex justify-center gap-4">
-                    {[
-                      { name: "Twitter", url: "https://twitter.com/jordanurbs" },
-                      { name: "Youtube", url: "https://youtube.com/@jordanurbsai" }
-                    ].map((platform) => (
-                      <Button
-                        key={platform.name}
-                        variant="ghost"
-                        size="icon"
-                        className="text-yellow-500 hover:text-cyan-400 hover:bg-transparent"
-                        asChild
-                        onClick={handleButtonClick}
-                        onMouseEnter={handleHover}
-                      >
-                        <Link href={platform.url} target="_blank" rel="noopener noreferrer">
-                          {platform.name === "Twitter" && <Twitter className="w-5 h-5" />}
-                          {platform.name === "Youtube" && <Youtube className="w-5 h-5" />}
-                        </Link>
-                      </Button>
-                    ))}
-                  </div>
-                  <div className="text-gray-400 text-xs text-center">
-                    <p>© 2025 AI CAPTAINS LLC</p>
-                    <p>Built by <a href="https://jordanurbs.com" className="hover:text-cyan-400">Jordan Urbs</a></p>
-                  {/*  <div className="flex justify-center gap-4 mt-1">
-                      <Link
-                        href="#"
-                        className="hover:text-cyan-400"
-                        onClick={handleButtonClick}
-                        onMouseEnter={handleHover}
-                      >
-                        MANUAL
+              {/* Social Links */}
+              <div className="space-y-4">
+                <div className="flex justify-center gap-4">
+                  {[
+                    { name: "Twitter", url: "https://twitter.com/jordanurbs" },
+                    { name: "Youtube", url: "https://youtube.com/@jordanurbsai" }
+                  ].map((platform) => (
+                    <Button
+                      key={platform.name}
+                      variant="ghost"
+                      size="icon"
+                      className="text-yellow-500 hover:text-cyan-400 hover:bg-transparent"
+                      asChild
+                      onClick={handleButtonClick}
+                      onMouseEnter={handleHover}
+                    >
+                      <Link href={platform.url} target="_blank" rel="noopener noreferrer">
+                        {platform.name === "Twitter" && <TwitterIcon className="w-5 h-5" />}
+                        {platform.name === "Youtube" && <YoutubeIcon className="w-5 h-5" />}
                       </Link>
-                      <Link
-                        href="#"
-                        className="hover:text-cyan-400"
-                        onClick={handleButtonClick}
-                        onMouseEnter={handleHover}
-                      >
-                        CHEAT CODES
-                      </Link>
-                    </div>*/}
-                  </div> 
+                    </Button>
+                  ))}
+                </div>
+                <div className="text-gray-400 text-xs text-center">
+                  <p>© 2025 AI CAPTAINS LLC</p>
+                  <p>Built by <a href="https://jordanurbs.com" className="hover:text-cyan-400">Jordan Urbs</a></p>
+                {/*  <div className="flex justify-center gap-4 mt-1">
+                    <Link
+                      href="#"
+                      className="hover:text-cyan-400"
+                      onClick={handleButtonClick}
+                      onMouseEnter={handleHover}
+                    >
+                      MANUAL
+                    </Link>
+                    <Link
+                      href="#"
+                      className="hover:text-cyan-400"
+                      onClick={handleButtonClick}
+                      onMouseEnter={handleHover}
+                    >
+                      CHEAT CODES
+                    </Link>
+                  </div>*/}
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Right Content - Scrollable */}
-            <div className="content-with-sidebar p-6 space-y-8">
-              {/* Menu Button - Only show on mobile */}
-              <div className="flex justify-end lg:hidden">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="border-yellow-500 text-yellow-500"
-                  onClick={() => {
-                    setIsMenuOpen(!isMenuOpen)
-                    handleButtonClick()
-                  }}
-                  onMouseEnter={handleHover}
-                >
-                  <Menu className="w-6 h-6" />
-                </Button>
+          {/* Right Content - Scrollable */}
+          <div className="content-with-sidebar space-y-8">
+            <div className="px-6 space-y-8">
+              {/* Hero Section - New Magazine Style */}
+              <MagazineHeroSection
+                onButtonClick={handleButtonClick}
+                onHover={handleHover}
+                onCelebrate={(type) => celebrate(type as any)}
+              />
+
+              {/* Terminal Navigation Toolkit CTA Section */}
+              <div id="tnt-section">
+                <TntCtaSection />
               </div>
 
-              {/* Hero Section */}
-              <section className="relative overflow-hidden rounded-lg border-4 border-yellow-500 p-6 bg-gradient-to-b from-blue-900 to-purple-900">
-                <div className="absolute inset-0 grid-bg opacity-50 z-0" style={{zIndex: 1}}></div>
-                <div className="relative z-20">
-                  <Image
-                    src="/images/magazine.png"
-                    alt="AI CAPTAINS Magazine"
-                    width={500}
-                    height={300}
-                    className="mx-auto object-contain"
-                    priority
-                  />
-                  <div className="mt-4 text-center">
-                    <Button
-                      className="retro-button bg-red-600 text-yellow-400 hover:bg-yellow-400 hover:text-red-600 font-bold px-12 py-6 button-text"
-                      onClick={handleButtonClick}
-                      onMouseEnter={handleHover}
-                      asChild
-                    >
-                      <a href="https://skool.com/aicaptains" target="_blank" rel="noopener noreferrer">
-                        POWER UP NOW <Zap className="ml-2 h-5 w-5 blink" />
-                      </a>
-                    </Button>
-                  </div>
-                </div>
-              </section>
+              {/* Problem Grid Section */}
+              <InteractiveBuildersDolemma />
 
-              {/* Projects Section */}
-              <section id="power-up-section" className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gray-900">
-                <div className="bg-yellow-500 text-black p-2 flex justify-between items-center">
-                  <h2 className="text-3xl md:text-6xl font-bold retro-text">SELECT YOUR POWER-UP</h2>
-                  <ChevronRight className="w-6 h-6" />
-                </div>
-                <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {/* Terminal Navigation Toolkit */}
-                  <Link
-                    href="https://tnt.aicaptains.ai"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`relative border-4 ${selectedItem === 0 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
-                    onClick={() => {
-                      setSelectedItem(0)
-                      playSound("click")
-                    }}
-                    onMouseEnter={() => {
-                      handleHover()
-                    }}
-                  >
-                    <Image
-                      src="/images/tnt-boxart.png"
-                      alt="Terminal Navigation Toolkit"
-                      width={200}
-                      height={300}
-                      className="w-full object-cover"
-                      priority
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                      <p className="text-yellow-500 text-sm font-bold">TERMINAL NAVIGATION TOOLKIT</p>
-                      <div className="flex mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
+              {/* Transformation Banner Section - Hidden */}
+              {/* <TransformationBanner /> */}
 
-                  {/* Implementation Call */}
-                  <Link
-                    href="https://calls.ai-captains.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`relative border-4 ${selectedItem === 1 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
-                    onClick={() => {
-                      setSelectedItem(1)
-                      playSound("click")
-                    }}
-                    onMouseEnter={() => {
-                      handleHover()
-                    }}
-                  >
-                    <Image
-                      src="/images/implementation-call.png"
-                      alt="Implementation Call"
-                      width={200}
-                      height={300}
-                      className="w-full object-cover"
-                      priority
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                      <p className="text-yellow-500 text-sm font-bold">IMPLEMENTATION CALL</p>
-                      <div className="flex mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
+              {/* Audience Cards Section - Hidden */}
+              {/* <AudienceCards /> */}
 
-                  {/* AI Captains Academy */}
-                  <Link
-                    href="https://skool.com/aicaptains"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`relative border-4 ${selectedItem === 2 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
-                    onClick={() => {
-                      setSelectedItem(2)
-                      playSound("click")
-                    }}
-                    onMouseEnter={() => {
-                      handleHover()
-                    }}
-                  >
-                    <Image
-                      src="/images/academy-boxart.png"
-                      alt="AI Captains Academy"
-                      width={200}
-                      height={300}
-                      className="w-full object-cover"
-                      priority
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                      <p className="text-yellow-500 text-sm font-bold">AI CAPTAINS ACADEMY</p>
-                      <div className="flex mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
+              {/* Enhanced Course Grid Section */}
+              <EnhancedCourseGrid />
 
-                  {/* Content Commander Challenge */}
-                  <Link
-                    href="https://ccc.ai-captains.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`relative border-4 ${selectedItem === 3 ? "border-cyan-400 blink" : "border-gray-700"} rounded-lg overflow-hidden cursor-pointer block`}
-                    onClick={() => {
-                      setSelectedItem(3)
-                      playSound("click")
-                    }}
-                    onMouseEnter={() => {
-                      handleHover()
-                    }}
-                  >
-                    <Image
-                      src="/images/ccc-boxart.png"
-                      alt="Content Commander Challenge"
-                      width={200}
-                      height={300}
-                      className="w-full object-cover"
-                      priority
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 p-2">
-                      <p className="text-yellow-500 text-sm font-bold">CONTENT COMMANDER CHALLENGE</p>
-                      <div className="flex mt-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              </section>
+              {/* Pricing Tiers Section - Temporarily hidden */}
+              {/* <PricingTiers /> */}
 
               {/* Testimonials Section - Full Width */}
-              <TestimonialsWidget />
+              <div id="testimonials-section">
+                <TestimonialsWidget />
+              </div>
 
               {/* Discovery Call Calendar - Full Width */}
               <DiscoveryCallEmbed />
 
-              {/* Contact Section - Full Width 
+              {/* Contact Section - Full Width
               <section className="border-4 border-yellow-500 rounded-lg overflow-hidden bg-gradient-to-br from-purple-900 to-blue-900">
                 <div className="bg-yellow-500 text-black p-2">
                   <h2 className="text-5xl md:text-6xl font-bold retro-text">CONTACT</h2>
@@ -531,11 +582,12 @@ function AICaptainsContent() {
               </section>*/}
             </div>
           </div>
-          
-          {/* Retro-Futuristic Footer - Full Width */}
-          <RetroFooter />
+
         </div>
       )}
+
+      {/* Retro-Futuristic Footer - Full Width, Completely Outside All Layout Containers */}
+      {!showIntro && <RetroFooter />}
     </div>
   )
 }
