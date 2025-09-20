@@ -21,7 +21,8 @@
       "Bash(pkill:*)",
       "Bash(lsof:*)",
       "Bash(nslookup:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(npm run:*)"
     ],
     "deny": [],
     "ask": []

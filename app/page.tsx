@@ -29,10 +29,12 @@ import { EasterEggs } from "@/components/easter-eggs"
 import { MagazineHeroSection } from "@/components/magazine-hero-section"
 import { MobileNavigation } from "@/components/mobile-navigation"
 import { StickyScrollToTop } from "@/components/sticky-scroll-to-top"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 // Wrap the main component with sound effects
 function AICaptainsContent() {
   // Removed selectedItem state - handled by EnhancedCourseGrid
+  const isMobile = useIsMobile()
   const [showIntro, setShowIntro] = useState(true)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [transitionStage, setTransitionStage] = useState<'idle' | 'instant-glitch' | 'shrinking' | 'static' | 'expanding' | 'tuning' | 'signal-lock' | 'complete'>('idle')
@@ -42,14 +44,19 @@ function AICaptainsContent() {
   const { playSound, isLoaded, toggleMute, isMuted, fadeBackgroundMusic, originalBackgroundVolume } = useSound()
   const { celebrate, CelebrationComponent } = useCelebration()
 
-  // Check if we should show the intro (only once per session)
+  // Check if we should show the intro (only once per session, or skip entirely on mobile)
   useEffect(() => {
     const hasSeenIntro = sessionStorage.getItem("hasSeenIntro")
-    if (hasSeenIntro) {
+    // Skip intro on mobile devices or if already seen
+    if (isMobile || hasSeenIntro) {
       setShowIntro(false)
       setShowWhimsicalEffects(true)
+      // Mark as seen for mobile users
+      if (isMobile) {
+        sessionStorage.setItem("hasSeenIntro", "true")
+      }
     }
-  }, [])
+  }, [isMobile])
 
   // Listen for celebration events from components
   useEffect(() => {
@@ -462,7 +469,7 @@ function AICaptainsContent() {
               {/* Bio */}
                 <div className="space-y-6 border-t-2 border-b-2 border-yellow-500 py-4">
                 <p className="text-gray-300 leading-relaxed text-sm">
-                  AI CAPTAINS ACADEMY transforms platform-dependent no-code passengers into AI Captains.
+                  We transform platform-dependent passengers into AI Captains.
               </p></div>
               {/* Game Button */}
               <div className="text-center pt-6 pb-6">

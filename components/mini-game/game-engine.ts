@@ -1,6 +1,12 @@
-// Game constants
-export const GAME_WIDTH = 800
-export const GAME_HEIGHT = 600
+// Game constants - now dynamic based on canvas size
+export let GAME_WIDTH = 800
+export let GAME_HEIGHT = 600
+
+// Function to update game dimensions dynamically
+export function updateGameDimensions(width: number, height: number) {
+  GAME_WIDTH = width
+  GAME_HEIGHT = height
+}
 export const PLAYER_WIDTH = 40
 export const PLAYER_HEIGHT = 30
 export const BULLET_WIDTH = 4
