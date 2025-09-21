@@ -211,7 +211,7 @@ export function MobileNavigation({
                 className="w-full retro-button bg-yellow-500 text-black hover:bg-cyan-400 hover:text-black font-bold justify-start"
                 onClick={() => {
                   onButtonClick()
-                  window.open('https://www.skool.com/ai-captains-academy', '_blank')
+                  window.open('https://www.skool.com/aicaptains', '_blank')
                   setIsMenuOpen(false)
                 }}
                 onMouseEnter={onHover}

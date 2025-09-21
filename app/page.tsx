@@ -415,7 +415,7 @@ function AICaptainsContent() {
                 className="retro-button bg-yellow-500 text-black hover:bg-cyan-400 hover:text-black font-bold px-4 py-2"
                 onClick={() => {
                   handleButtonClick()
-                  window.open('https://www.skool.com/ai-captains-academy', '_blank')
+                  window.open('https://www.skool.com/aicaptains', '_blank')
                 }}
                 onMouseEnter={handleHover}
               >
