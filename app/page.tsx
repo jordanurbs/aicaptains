@@ -44,19 +44,15 @@ function AICaptainsContent() {
   const { playSound, isLoaded, toggleMute, isMuted, fadeBackgroundMusic, originalBackgroundVolume } = useSound()
   const { celebrate, CelebrationComponent } = useCelebration()
 
-  // Check if we should show the intro (only once per session, or skip entirely on mobile)
+  // Check if we should show the intro (only once per session)
   useEffect(() => {
     const hasSeenIntro = sessionStorage.getItem("hasSeenIntro")
-    // Skip intro on mobile devices or if already seen
-    if (isMobile || hasSeenIntro) {
+    // Skip intro only if already seen this session
+    if (hasSeenIntro) {
       setShowIntro(false)
       setShowWhimsicalEffects(true)
-      // Mark as seen for mobile users
-      if (isMobile) {
-        sessionStorage.setItem("hasSeenIntro", "true")
-      }
     }
-  }, [isMobile])
+  }, [])
 
   // Listen for celebration events from components
   useEffect(() => {

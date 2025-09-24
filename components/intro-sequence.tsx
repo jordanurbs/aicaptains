@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { useSound } from "@/components/sound-provider"
 import { InteractiveTVPlayer } from "@/components/interactive-tv-player"
+import { MobileTVPlayer } from "@/components/mobile-tv-player"
+import { useIsMobile } from "@/hooks/use-mobile"
 import Image from "next/image"
 
 type IntroStep = 
@@ -21,6 +23,7 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
   const [currentStep, setCurrentStep] = useState<IntroStep>("black")
   const [skipIntro] = useState(false)
   const [tvState, setTvState] = useState<'off' | 'booting' | 'static' | 'playing' | 'paused'>('off')
+  const isMobile = useIsMobile()
 
   // Handle the intro sequence steps
   useEffect(() => {
@@ -53,6 +56,19 @@ export function IntroSequence({ onComplete }: { onComplete: () => void }) {
     return null
   }
 
+  // Render mobile version if on mobile device
+  if (isMobile) {
+    return (
+      <MobileTVPlayer
+        videoSrc="/videos/intro-teaser-v1.mp4"
+        autoPlay={!skipIntro}
+        onStateChange={setTvState}
+        onSkipToMain={onComplete}
+      />
+    )
+  }
+
+  // Desktop version
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col overflow-hidden">
       {/* Logo at the top - always visible */}
