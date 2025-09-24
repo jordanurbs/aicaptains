@@ -136,7 +136,7 @@ export function MobileNavigation({
 
             {/* Bio */}              <div className="space-y-6 border-t-2 border-b-2 border-yellow-500 py-4">
                   <p className="text-gray-300 leading-relaxed text-sm">
-                    AI CAPTAINS ACADEMY empowers online builders to learn to build & deploy AI-powered apps with conversation-driven development.<br></br><br></br>We transform platform-dependent, no code passengers into AI Captains.</p>
+                    AI CAPTAINS ACADEMY empowers online builders to learn to build & deploy AI-powered apps with conversation-driven development.<br></br><br></br>We transform no code passengers into AI Captains.</p>
                 </div>
 
             {/* Navigation Buttons */}
@@ -217,7 +217,7 @@ export function MobileNavigation({
                 onMouseEnter={onHover}
               >
                 <Zap className="w-4 h-4 mr-2" />
-                 NOW
+                 ENROLL TODAY
               </Button>
             </div>
 
