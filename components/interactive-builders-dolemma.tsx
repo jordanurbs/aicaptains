@@ -5,6 +5,7 @@ import { X, ChevronRight, RotateCcw, Target, MessageSquare, Sparkles, AlertTrian
 import Image from "next/image"
 import { useSound } from "@/components/sound-provider"
 import { useCelebration } from "@/components/celebration-effects"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { GoalCards } from "@/components/goal-cards"
 import { ExcuseSelector } from "@/components/excuse-selector"
 import { AIResponseDisplay } from "@/components/ai-response-display"
@@ -72,6 +73,7 @@ export function InteractiveBuildersDolemma({ className = "" }: InteractiveBuilde
   const dropZoneRef = useRef<HTMLDivElement>(null)
   const { playSound } = useSound()
   const { celebrate, CelebrationComponent } = useCelebration()
+  const isMobile = useIsMobile()
   const { 
     generateResponse, 
     retry,
@@ -539,7 +541,7 @@ export function InteractiveBuildersDolemma({ className = "" }: InteractiveBuilde
                               celebrate("goal-selection")
                             }
                           }}
-                          placeholder="Type or drag & drop a goal here"
+                          placeholder={isMobile ? "Type or tap & drop a goal here" : "Type or drag & drop a goal here"}
                           className={`
                             w-full bg-transparent border-none outline-none
                             text-2xl lg:text-4xl font-bold retro-text placeholder-gray-500
@@ -573,7 +575,7 @@ export function InteractiveBuildersDolemma({ className = "" }: InteractiveBuilde
                         {/* Instruction text when empty */}
                         {!customGoalText && !isDropZoneActive && (
                           <div className="mt-2 text-gray-500 font-mono text-xs lg:text-sm">
-                            Type your goal or drag a card from below
+                            {isMobile ? "Type your goal or tap a card from below" : "Type your goal or drag a card from below"}
                           </div>
                         )}
                       </div>

@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import { Target, Zap, Rocket, Briefcase, TrendingUp, Users } from "lucide-react"
 import { useSound } from "@/components/sound-provider"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 interface Goal {
   id: string
@@ -73,6 +74,7 @@ const goals: Goal[] = [
 ]
 
 export function GoalCards({ className = "", onGoalDrop, dropZones = [] }: GoalCardsProps) {
+  const isMobile = useIsMobile()
   const [draggedGoal, setDraggedGoal] = useState<Goal | null>(null)
   const [dragPosition, setDragPosition] = useState<Position>({ x: 0, y: 0 })
   const [hoveredGoal, setHoveredGoal] = useState<string | null>(null)
@@ -317,7 +319,7 @@ export function GoalCards({ className = "", onGoalDrop, dropZones = [] }: GoalCa
                       [{String(index + 1).padStart(2, '0')}]
                     </div>
                     <div className={`text-xs font-bold retro-text animate-pulse ${colors.icon}`}>
-                      {isDragged ? '&gt; DRAGGING...' : '&gt; READY TO DRAG'}
+                      {isDragged ? (isMobile ? '> MOVING...' : '> DRAGGING...') : (isMobile ? '> READY TO TAP' : '> READY TO DRAG')}
                     </div>
                   </div>
                 )}
