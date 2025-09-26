@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-export default function Unsubscribed() {
+export default function SequenceUnsubscribed() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
       {/* Background Image */}
@@ -37,36 +37,35 @@ export default function Unsubscribed() {
         {/* Unsubscribed Status */}
         <div className="mb-8">
           <p className="text-cyan-400 retro-text text-xl md:text-2xl font-bold">
-            You've been unsubscribed!
+            Successfully unsubscribed
           </p>
         </div>
 
         {/* Main Heading */}
         <div className="mb-8">
           <h1 className="text-white text-4xl md:text-5xl lg:text-6xl font-bold leading-tight max-w-4xl">
-            We're sorry to see you go, Captain.
+            You've been unsubscribed from this sequence
           </h1>
         </div>
 
         {/* Unsubscribe Description */}
         <div className="mb-8 max-w-4xl">
           <p className="text-gray-200 text-lg md:text-xl leading-relaxed">
-            Your email has been unsubscribed as you've requested.
+            You won't receive any more emails from this particular series.
+          </p>
+          <p className="text-gray-300 text-base md:text-lg leading-relaxed mt-4">
+            You'll still receive other important updates and communications from AI Captains Academy.
           </p>
         </div>
 
         {/* Return to Site */}
         <div className="max-w-4xl">
-          <p className="text-gray-300 text-lg md:text-xl leading-relaxed">
-          
-            <Link
-              href="/"
-              className="text-cyan-400 hover:text-cyan-300 transition-colors duration-200 font-semibold underline decoration-cyan-400/50 hover:decoration-cyan-300"
-            >
-              Return to AI Captains Academy
-            </Link>
-    
-          </p>
+          <Link
+            href="/"
+            className="inline-block px-8 py-3 text-black bg-cyan-400 hover:bg-cyan-300 transition-colors duration-200 font-bold text-lg rounded-lg"
+          >
+            Return to AI Captains Academy
+          </Link>
         </div>
       </div>
     </div>

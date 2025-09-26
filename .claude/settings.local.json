@@ -22,7 +22,8 @@
       "Bash(lsof:*)",
       "Bash(nslookup:*)",
       "Bash(python3:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
